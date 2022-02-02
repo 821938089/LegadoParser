@@ -40,6 +40,7 @@ page - 页数 - int
 返回值 list[dict]
 
 注意：如果搜索后直接跳转到了详情页，将调用parseBookInfo获取信息，字典key注意差异。
+书籍Url的key将从bookUrl变为tocUrl。
 """
 ```
 
