@@ -15,7 +15,7 @@ def debug(bookSources, startName=''):
     start = False
     for bookSource in bookSources:
         if startName:
-            if bookSource['bookSourceName'] == '👍 笔趣阁③' and not start:
+            if bookSource['bookSourceName'] == startName and not start:
                 start = True
             if not start:
                 continue

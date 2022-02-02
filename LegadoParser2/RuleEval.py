@@ -14,20 +14,23 @@ def getElements(content, rulesObj, evalJs):
         for rule in rulesObj:
             if rule['type'] == RuleType.DefaultOrEnd:
                 rule['type'] = RuleType.Json
-    for rule in rulesObj:
-        if rule['type'] == RuleType.Put:
-            putProcessor(content, rule, evalJs)
-    for rule in rulesObj:
-        if rule['type'] == RuleType.DefaultOrEnd:
-            content = defaultProcessor(content, rule)
-        elif rule['type'] == RuleType.Xpath:
-            content = xpathProcessor(content, rule)
-        elif rule['type'] == RuleType.Json:
-            content = jsonPathProcessor(content, rule)
-        elif rule['type'] == RuleType.Js:
-            content = jsProcessor(content, evalJs, rule)
-        elif rule['type'] == RuleType.Regex:
-            content = regexProcessor(content, rule)
+    try:
+        for rule in rulesObj:
+            if rule['type'] == RuleType.Put:
+                putProcessor(content, rule, evalJs)
+        for rule in rulesObj:
+            if rule['type'] == RuleType.DefaultOrEnd:
+                content = defaultProcessor(content, rule)
+            elif rule['type'] == RuleType.Xpath:
+                content = xpathProcessor(content, rule)
+            elif rule['type'] == RuleType.Json:
+                content = jsonPathProcessor(content, rule)
+            elif rule['type'] == RuleType.Js:
+                content = jsProcessor(content, evalJs, rule)
+            elif rule['type'] == RuleType.Regex:
+                content = regexProcessor(content, rule)
+    except:
+        content = []
 
     return content
 
@@ -38,25 +41,26 @@ def getStrings(content, rulesObj, evalJs, **kwargs):
         for rule in rulesObj:
             if rule['type'] == RuleType.DefaultOrEnd:
                 rule['type'] = RuleType.Json
+    try:
+        for rule in rulesObj:
+            if rule['type'] == RuleType.Put:
+                putProcessor(content, rule, evalJs)
 
-    for rule in rulesObj:
-        if rule['type'] == RuleType.Put:
-            putProcessor(content, rule, evalJs)
-
-    for rule in rulesObj:
-        if rule['type'] == RuleType.DefaultOrEnd:
-            content = defaultProcessor(content, rule, hasEndRule=True)
-        elif rule['type'] == RuleType.Xpath:
-            content = xpathProcessor(content, rule)
-        elif rule['type'] == RuleType.Json:
-            content = jsonPathProcessor(content, rule)
-        elif rule['type'] == RuleType.Js:
-            content = jsProcessor(content, evalJs, rule, **kwargs)
-        elif rule['type'] == RuleType.Format:
-            content = formatProcrssor(content, rule, evalJs)
-        elif rule['type'] == RuleType.Regex:
-            content = regexProcessor(content, rule, **kwargs)
-
+        for rule in rulesObj:
+            if rule['type'] == RuleType.DefaultOrEnd:
+                content = defaultProcessor(content, rule, hasEndRule=True)
+            elif rule['type'] == RuleType.Xpath:
+                content = xpathProcessor(content, rule)
+            elif rule['type'] == RuleType.Json:
+                content = jsonPathProcessor(content, rule)
+            elif rule['type'] == RuleType.Js:
+                content = jsProcessor(content, evalJs, rule, **kwargs)
+            elif rule['type'] == RuleType.Format:
+                content = formatProcrssor(content, rule, evalJs)
+            elif rule['type'] == RuleType.Regex:
+                content = regexProcessor(content, rule, **kwargs)
+    except:
+        content = ['']
     if content and isinstance(content[-1], tuple):
         content = content[:-1]
 

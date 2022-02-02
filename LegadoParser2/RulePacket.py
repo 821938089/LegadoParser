@@ -240,10 +240,10 @@ def compileRule(rules):
             except XPathSyntaxError:
                 pass
             except SelectorSyntaxError as e:
-                print(f'css 错误{e}')
+                # print(f'css 错误{e}')
                 pass
             except ExpressionError as e:
-                print(f'不支持的选择器：{e}')
+                # print(f'不支持的选择器：{e}')
                 raise
                 pass
             except IndexError:
@@ -259,7 +259,7 @@ def compileRule(rules):
             except SelectorSyntaxError:
                 pass
             except ExpressionError as e:
-                print(f'不支持的选择器：{e}')
+                # print(f'不支持的选择器：{e}')
                 raise
                 pass
             except IndexError:
@@ -284,7 +284,7 @@ def compileRule(rules):
             try:
                 ruleObj['jsonPath'] = getJsonPath(rules[cursor])
             except JSONPathError as e:
-                print(f'compileRule 解析jsonpath失败 {e}')
+                # print(f'compileRule 解析jsonpath失败 {e}')
                 pass
 
         cursor += 1
