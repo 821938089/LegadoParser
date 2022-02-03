@@ -7,7 +7,7 @@ Legado 书源解析 词法分析 Lexical analyzer
 # from copy import deepcopy
 
 """
-分词器
+阅读3.0规则分词器
 
 参数:
     text: 进行分词的规则
@@ -28,6 +28,19 @@ Legado 书源解析 词法分析 Lexical analyzer
 
 
 def tokenizer(text: str) -> list:
+    """
+阅读3.0规则分词器
+
+参数:
+    text: 进行分词的规则
+
+返回值:
+    一个list里面按分词顺序存语法单元
+
+    例如:['id.info', '@', 'tag.a.-1', '@', 'text', '&&', 'id.info',
+        '@', 'tag.p.-2', '@', 'text', '##', '最后更新.|..\\:.*']
+
+"""
     # exclude = {'{{', '}}', '{', '}', ',', '@get:{'}
 
     tokenList = []

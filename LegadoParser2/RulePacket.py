@@ -1,7 +1,5 @@
 # 将词法分析的规则进行分组
 
-
-import json
 from cssselect.parser import tokenize
 from LegadoParser2.RuleType import RuleType, getRuleType2, getRuleType
 from LegadoParser2.Tokenize2 import tokenizer, tokenizerInner
@@ -10,11 +8,9 @@ from lxml.etree import _Element, tostring, XPath, XPathSyntaxError
 from cssselect import SelectorSyntaxError, ExpressionError
 from LegadoParser2.RuleJsonPath.RuleJsonPath import getJsonPath
 from jsonpath_ng.exceptions import JSONPathError
-from LegadoParser2.exceptions import RuleCompileError
-from LegadoParser2.RuleObjectEncoder import RuleObjectEncoder
 import re
-import pprint
 from LegadoParser2 import GSON
+from LegadoParser2.config import DEBUG_MODE
 
 
 def packet(rules):
@@ -140,7 +136,8 @@ def preProcessRule(packedRules):
                     rule['preProcess']['body']['reObj'] = re.compile(
                         rule['preProcess']['body']['regex'])
                 except re.error:
-                    print('preProcessRule 正则表达式编译失败')
+                    if DEBUG_MODE:
+                        print('preProcessRule 正则表达式编译失败')
                     pass
             if rule['preProcess']['body']['replacement'] and rule['preProcess']['regexType'] == 'replace':
                 rule['preProcess']['body']['replacement'] = captureGroupRegex.sub(
@@ -240,10 +237,12 @@ def compileRule(rules):
             except XPathSyntaxError:
                 pass
             except SelectorSyntaxError as e:
-                # print(f'css 错误{e}')
+                if DEBUG_MODE:
+                    print(f'css 错误{e}')
                 pass
             except ExpressionError as e:
-                # print(f'不支持的选择器：{e}')
+                if DEBUG_MODE:
+                    print(f'不支持的选择器：{e}')
                 raise
                 pass
             except IndexError:
@@ -259,7 +258,8 @@ def compileRule(rules):
             except SelectorSyntaxError:
                 pass
             except ExpressionError as e:
-                # print(f'不支持的选择器：{e}')
+                if DEBUG_MODE:
+                    print(f'不支持的选择器：{e}')
                 raise
                 pass
             except IndexError:
@@ -284,7 +284,8 @@ def compileRule(rules):
             try:
                 ruleObj['jsonPath'] = getJsonPath(rules[cursor])
             except JSONPathError as e:
-                # print(f'compileRule 解析jsonpath失败 {e}')
+                if DEBUG_MODE:
+                    print(f'compileRule 解析jsonpath失败 {e}')
                 pass
 
         cursor += 1

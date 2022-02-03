@@ -1,1 +1,1 @@
-from LegadoParser2.RuleXpath.RuleXpath import *
+# from LegadoParser2.RuleXpath.RuleXpath import *

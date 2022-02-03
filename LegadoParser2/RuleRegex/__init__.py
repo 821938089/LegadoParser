@@ -1,1 +1,1 @@
-from LegadoParser2.RuleRegex.RuleRegex import *
+# from LegadoParser2.RuleRegex.RuleRegex import *

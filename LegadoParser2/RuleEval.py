@@ -4,6 +4,7 @@ from LegadoParser2.RuleDefault.RuleDefaultEfficient2 import defaultProcessor
 from LegadoParser2.RuleXpath.RuleXpath import xpathProcessor
 from LegadoParser2.RuleJsonPath.RuleJsonPath import jsonPathProcessor
 from LegadoParser2.RuleRegex.RuleRegex import regexProcessor
+from LegadoParser2.config import DEBUG_MODE
 from lxml.etree import _Element, tostring
 from copy import deepcopy
 
@@ -30,8 +31,10 @@ def getElements(content, rulesObj, evalJs):
             elif rule['type'] == RuleType.Regex:
                 content = regexProcessor(content, rule)
     except:
-        content = []
-
+        if DEBUG_MODE:
+            raise
+        else:
+            content = []
     return content
 
 
@@ -60,7 +63,10 @@ def getStrings(content, rulesObj, evalJs, **kwargs):
             elif rule['type'] == RuleType.Regex:
                 content = regexProcessor(content, rule, **kwargs)
     except:
-        content = ['']
+        if DEBUG_MODE:
+            raise
+        else:
+            content = ['']
     if content and isinstance(content[-1], tuple):
         content = content[:-1]
 

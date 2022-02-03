@@ -1,1 +1,1 @@
-from LegadoParser2.RuleJs.JS import *
+# from LegadoParser2.RuleJs.JS import *

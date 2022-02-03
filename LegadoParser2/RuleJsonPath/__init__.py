@@ -1,1 +1,1 @@
-from LegadoParser2.RuleJsonPath.RuleJsonPath import *
+# from LegadoParser2.RuleJsonPath.RuleJsonPath import *
