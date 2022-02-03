@@ -1,5 +1,3 @@
-import json
-from unittest import result
 from LegadoParser2.RuleUrl.Url import parseUrl, getContent, urljoin
 from LegadoParser2.RuleJs.JS import EvalJs
 from LegadoParser2.RulePacket import getRuleObj, trimBookSource
