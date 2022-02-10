@@ -97,11 +97,22 @@ def getStringsByDefault(content, compileRule):
         content = [content]
     rule = compileRule['rule']
     Xpath = compileRule['endXpath']
-    textRegex = re.compile('\n\s+')
+    # 按浏览器渲染规范大致处理多数情况下的whitespace
+    # 测试书源：书趣小说
+    # https://stackoverflow.com/questions/24615355/browser-white-space-rendering
+    # https://stackoverflow.com/questions/18502410/how-to-remove-insignificant-whitespace-in-lxml-html
+    # https://stackoverflow.com/questions/12863588/when-does-whitespace-matter-in-html
+    # https://stackoverflow.com/questions/588356/why-does-the-browser-renders-a-newline-as-space
+    # https://www.w3.org/TR/REC-html40/struct/text.html#h-9.1
+    # https://www.w3.org/TR/CSS21/text.html#white-space-model
+
+    whiteSpaceRegex = re.compile('\s+')
     results = []
     for c in content:
         if rule == 'text':
-            results.append(''.join([textRegex.sub('', i) for i in Xpath(c)]))
+            # results.append(''.join([whiteSpaceRegex.sub(' ', i) for i in Xpath(c)]))
+            text = tostring(c, encoding='utf-8', method='text', with_tail=False).decode()
+            results.append(whiteSpaceRegex.sub(' ', text))
         elif rule == 'textNodes':
             results.append('\n'.join([i.strip() for i in Xpath(c)]))
         elif rule == 'ownText':
