@@ -118,11 +118,12 @@ def getStringsByDefault(content, compileRule):
         elif rule == 'ownText':
             results.append(''.join(Xpath(c)))
         elif rule == 'html':
-            # for i in Xpath(c):
-            #     i.getparent().remove(i)
+            # 删除 script style 标签
+            for i in Xpath(c):
+                i.clear(keep_tail=True)
             html = tostring(c, encoding='utf-8', method='html', with_tail=False
                             ).decode('utf-8').replace('<br>', '\n<br>')
-            html = Fmt.scriptStyleRegex.sub('', html)
+            # html = Fmt.scriptStyleRegex.sub('', html)
             results.append(html)
         elif rule == 'all':
             results.append(tostring(c, encoding='utf-8', method='html', with_tail=False
