@@ -124,6 +124,8 @@ def getRuleType2(rules, index):
         return RuleType.Format
     elif index > 0 and rules[index - 1] == '{':
         return RuleType.Format
+    elif index > 0 and len(rules[index - 1]) == 2 and rules[index - 1][0] == '$' and rules[index - 1][1].isnumeric():
+        return RuleType.Format
     elif rules[index] == '}' and rules[index - 2] == '@get:{':
         return RuleType.Format
     elif rules[index] == '}' and rules[index - 2] == '{':
@@ -141,6 +143,8 @@ def getRuleType2(rules, index):
     elif index + 1 < length and rules[index + 1] == '@get:{':
         return RuleType.Format
     elif index + 1 < length and rules[index + 1] == '{':
+        return RuleType.Format
+    elif index + 1 < length and len(rules[index + 1]) == 2 and rules[index + 1][0] == '$' and rules[index + 1][1].isnumeric():
         return RuleType.Format
     elif index > 0 and rules[index - 1] == '}}':
         return RuleType.Format

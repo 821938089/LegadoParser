@@ -49,7 +49,7 @@ def parseChapterList(bS, urlObj, content, evalJs):
             nextTocUrls = getStrings(content, rulesNextTocUrl, evalJs)
         else:
             nextTocUrls = None
-
+        falseSet = {'False', 'None', '0'}
         for e in elements:
             chapter = {}
             if ruleToc.get('chapterName', None):
@@ -60,10 +60,22 @@ def parseChapterList(bS, urlObj, content, evalJs):
                     chapter['url'] = urljoin(urlObj['url'], chapter['url'])
             if ruleToc.get('isPay', None):
                 chapter['isPay'] = getString(e, rulesIsPay, evalJs)
+                if chapter['isPay'] and chapter['isPay'] in falseSet:
+                    chapter['isPay'] = False
+                else:
+                    chapter['isPay'] = True
             if ruleToc.get('isVip', None):
                 chapter['isVip'] = getString(e, rulesIsVip, evalJs)
+                if chapter['isVip'] and chapter['isVip'] in falseSet:
+                    chapter['isVip'] = False
+                else:
+                    chapter['isVip'] = True
             if ruleToc.get('isVolume', None):
                 chapter['isVolume'] = getString(e, rulesIsVolume, evalJs)
+                if chapter['isVolume'] and chapter['isVolume'] in falseSet:
+                    chapter['isVolume'] = False
+                else:
+                    chapter['isVolume'] = True
             if ruleToc.get('updateTime', None):
                 chapter['updateTime'] = getString(e, rulesUpdateTime, evalJs)
             if chapter['name']:

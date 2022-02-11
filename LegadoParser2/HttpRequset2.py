@@ -120,10 +120,4 @@ if __name__ == '__main__':
     # import logging
     # logging.basicConfig(filename="httpx.log", filemode="w", level=logging.NOTSET)
 
-    req('https://www.bilibili.com')
-    # req('https://www.bilibili.com')
-    # import httpx
-
-    # with httpx.Client(http2=True) as client:
-    #     r = client.get("https://www.bilibili.com")
     pass

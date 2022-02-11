@@ -5,6 +5,7 @@ from LegadoParser2 import GSON
 from LegadoParser2.HttpRequset2 import req
 from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 from httpx._exceptions import RequestError
+from LegadoParser2.config import DEBUG_MODE
 import json
 
 
@@ -127,7 +128,8 @@ def getContent(urlObj):
 
     # print(respone.status_code)
     # print(searchObj)
-    respone.raise_for_status()
+    if DEBUG_MODE:
+        respone.raise_for_status()
     # if respone.status_code != 200:
     #     raise RequestError('状态码非200')
     # 重定向到了详情页

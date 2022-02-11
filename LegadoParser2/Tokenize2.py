@@ -227,8 +227,8 @@ def tokenizer(text: str) -> list:
         elif char == '#':
             if (result := ck(cursor, tmpStr[:-1], '####'))[2]:
                 cursor, tmpStr, __ = result
-            elif (result := ck(cursor, tmpStr[:-1], '###'))[2]:
-                cursor, tmpStr, __ = result
+            # elif (result := ck(cursor, tmpStr[:-1], '###'))[2]:
+            #     cursor, tmpStr, __ = result
             elif (result := ck(cursor, tmpStr[:-1], '##'))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:

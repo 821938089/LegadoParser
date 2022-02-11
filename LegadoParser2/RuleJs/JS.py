@@ -1,13 +1,14 @@
 
 import quickjs
 import json
-from LegadoParser2.HttpRequset2 import req
-from httpx._exceptions import RequestError
+# from LegadoParser2.HttpRequset2 import req
+# from httpx._exceptions import RequestError
 import traceback
 import json
-from LegadoParser2.RuleUrl.Url import parseUrl
+from LegadoParser2.RuleUrl.Url import parseUrl, getContent
 from quickjs import Object
 import os
+from LegadoParser2.config import DEBUG_MODE
 _jsCache = ''
 
 
@@ -50,8 +51,8 @@ class EvalJs(object):
         result = self.context.eval(expression)
         if isinstance(result, Object):
             return json.loads(result.json())
-        elif result is None:
-            return None
+        # elif result is None:
+        #     return None
         else:
             return str(result)
 
@@ -67,46 +68,48 @@ class EvalJs(object):
 
     def ajax(self, url):
         try:
-            print(url)
+            if DEBUG_MODE:
+                print(url)
             urlObj = parseUrl(url, self)
             content = getContent(urlObj)[0]
         except:
-            print('ajax出错了')
-            print(f'ajax url {url}')
-            print(traceback.format_exc())
+            if DEBUG_MODE:
+                print('ajax出错了')
+                print(f'ajax url {url}')
+                print(traceback.format_exc())
         return content
 
 
-def getContent(searchObj):
-    if searchObj['method'] == 'GET':
-        method = 0
-    elif searchObj['method'] == 'POST':
-        method = 1
-    redirected = False
-    try:
+# def getContent(searchObj):
+#     if searchObj['method'] == 'GET':
+#         method = 0
+#     elif searchObj['method'] == 'POST':
+#         method = 1
+#     redirected = False
+#     try:
 
-        content, __, respone = req(searchObj['url'], header=searchObj['headers'],
-                                   method=method, post_data=searchObj['body'])
-        searchObj['finalurl'] = str(respone.url)
-        if respone.history:
-            searchObj['redirected'] = True
-        else:
-            searchObj['redirected'] = False
+#         content, __, respone = req(searchObj['url'], header=searchObj['headers'],
+#                                    method=method, post_data=searchObj['body'])
+#         searchObj['finalurl'] = str(respone.url)
+#         if respone.history:
+#             searchObj['redirected'] = True
+#         else:
+#             searchObj['redirected'] = False
 
-    except RequestError:
-        raise
-        # exc_type, exc_value, __ = sys.exc_info()
-        # return f'Request Fail: {exc_type} {exc_value}', False
-        return f'Request Fail: {traceback.format_exc()}', False
+#     except RequestError:
+#         raise
+#         # exc_type, exc_value, __ = sys.exc_info()
+#         # return f'Request Fail: {exc_type} {exc_value}', False
+#         return f'Request Fail: {traceback.format_exc()}', False
 
-    print(respone.status_code)
-    # print(searchObj)
-    # 重定向到了详情页
-    if respone.history:
-        redirected = True
-        return content, redirected
-    else:
-        return content, redirected
+#     print(respone.status_code)
+#     # print(searchObj)
+#     # 重定向到了详情页
+#     if respone.history:
+#         redirected = True
+#         return content, redirected
+#     else:
+#         return content, redirected
 
 
 # def setDefaultHeaders(headers, bodyType):

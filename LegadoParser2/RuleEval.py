@@ -39,7 +39,7 @@ def getElements(content, rulesObj, evalJs):
 
 
 def getStrings(content, rulesObj, evalJs, **kwargs):
-    if isinstance(content, (dict, list)) or (isinstance(content, str) and content[0] in {'{', ']'} and content[-1] in {'}', ']'}):
+    if isinstance(content, (dict, list)) or (isinstance(content, str) and content and content[0] in {'{', ']'} and content[-1] in {'}', ']'}):
         # 当内容是json是默认规则为JsonPath
         for rule in rulesObj:
             if rule['type'] == RuleType.DefaultOrEnd:
@@ -67,6 +67,7 @@ def getStrings(content, rulesObj, evalJs, **kwargs):
             raise
         else:
             content = ['']
+            return content
     if content and isinstance(content[-1], tuple):
         content = content[:-1]
 
@@ -104,6 +105,7 @@ def jsProcessor(content, evalJs, rule, **kwargs):
         try:
             result = ''.join(content)
         except TypeError:
+            # content内含一个字典[{...}]
             if content:
                 result = content[0]
             pass
@@ -125,7 +127,7 @@ def jsProcessor(content, evalJs, rule, **kwargs):
 
 
 def formatProcrssor(content, rule, evalJs):
-    # 处理 {{ }}  @get:{ } { } $1
+    # 处理 {{ }}  @get:{ } {$. } $1
 
     joinSymbol = rule['joinSymbol']
     crossJoin = rule['crossJoin']
@@ -166,7 +168,7 @@ def formatProcrssor(content, rule, evalJs):
             rawRules[jsonRules[idx][1] - 1] = ''
             rawRules[jsonRules[idx][1] + 1] = ''
         for idx, r in enumerate(regexRules):
-            rawRules[regexRules[idx][1]] = content[int(r[0][1])]
+            rawRules[regexRules[idx][1]] = content[int(r[0][1]) - 1]
         for idx, r in enumerate(getRules):
             rawRules[getRules[idx][1]] = evalJs.getVAR(r[0])
             rawRules[getRules[idx][1] - 1] = ''

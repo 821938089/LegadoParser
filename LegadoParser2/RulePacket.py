@@ -1,6 +1,5 @@
 # 将词法分析的规则进行分组
 
-from cssselect.parser import tokenize
 from LegadoParser2.RuleType import RuleType, getRuleType2, getRuleType
 from LegadoParser2.Tokenize2 import tokenizer, tokenizerInner
 from LegadoParser2.RuleDefault.RuleDefaultEfficient2 import parseIndex, getElementsXpath, getStringsXpath
@@ -184,6 +183,7 @@ def preProcessRule(packedRules):
                         formatObj['getRules'].append(
                             (rule['subRules'][0][cursor], cursor))
                     elif ruleType == RuleType.Regex:
+                        # allInOne 的 $1
                         formatObj['regexRules'].append(
                             (rule['subRules'][0][cursor], cursor))
                     elif ruleType == RuleType.JsonInner:
@@ -243,7 +243,7 @@ def compileRule(rules):
             except ExpressionError as e:
                 if DEBUG_MODE:
                     print(f'不支持的选择器：{e}')
-                raise
+                    raise
                 pass
             except IndexError:
                 pass
@@ -260,7 +260,7 @@ def compileRule(rules):
             except ExpressionError as e:
                 if DEBUG_MODE:
                     print(f'不支持的选择器：{e}')
-                raise
+                    raise
                 pass
             except IndexError:
                 pass

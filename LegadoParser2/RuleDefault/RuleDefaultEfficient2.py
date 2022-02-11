@@ -6,7 +6,7 @@ from lxml.etree import HTML
 from lxml.cssselect import CSSSelector
 # from LegadoParser2.FormatUtils import Fmt
 from LegadoParser2.RuleType import RuleType
-
+from LegadoParser2.config import DEBUG_MODE
 if sys.platform == 'win32':
     from LegadoParser2.html5_parser import parse
 else:
@@ -35,7 +35,8 @@ def getElementsByDefault(content, compileRule):
     Xpath = compileRule['xpath']
 
     if Xpath is None:
-        print(f'getElementsByDefault : Xpath 为 None')
+        if DEBUG_MODE:
+            print(f'getElementsByDefault : Xpath 为 None')
         return []
 
     if rule == '':
@@ -58,7 +59,8 @@ def getElementsByDefault(content, compileRule):
         try:
             content = selectByIndex(indexList, content)
         except IndexError as e:
-            print(f'索引出错 {e}')
+            if DEBUG_MODE:
+                print(f'索引出错 {e}')
             return []
     return content
 
@@ -109,7 +111,7 @@ def getStringsByDefault(content, compileRule):
     # https://www.w3.org/TR/REC-html40/struct/text.html#h-9.1
     # https://www.w3.org/TR/CSS21/text.html#white-space-model
 
-    whiteSpaceRegex = re.compile('\s+')
+    whiteSpaceRegex = re.compile(r'\s+')
     results = []
     for c in content:
         if rule == 'text':

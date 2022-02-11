@@ -2,6 +2,7 @@ from LegadoParser2.Tokenize2 import tokenizerUrl
 from LegadoParser2.RuleType import RuleType
 from copy import deepcopy
 from LegadoParser2.RulePacket import preProcessRule, packet
+from LegadoParser2.config import DEBUG_MODE
 
 
 def getUrlRuleObj(rule):
@@ -9,17 +10,22 @@ def getUrlRuleObj(rule):
 
 
 def getStrings(content, rulesObj, evalJs):
+    try:
+        for rule in rulesObj:
+            if rule['type'] == RuleType.DefaultOrEnd:
+                pass
+            elif rule['type'] == RuleType.Js:
+                content = jsProcessor(content, evalJs, rule)
+            elif rule['type'] == RuleType.Format:
+                content = formatProcrssor(content, rule, evalJs)
 
-    for rule in rulesObj:
-        if rule['type'] == RuleType.DefaultOrEnd:
-            pass
-        elif rule['type'] == RuleType.Js:
-            content = jsProcessor(content, evalJs, rule)
-        elif rule['type'] == RuleType.Format:
-            content = formatProcrssor(content, rule, evalJs)
-
-    if isinstance(content, str):
-        content = [content]
+        if isinstance(content, str):
+            content = [content]
+    except:
+        if DEBUG_MODE:
+            raise
+        else:
+            content = ['']
 
     return content
 
@@ -66,9 +72,9 @@ def jsProcessor(content, evalJs, rule):
     for idx, jlst in enumerate(js):
 
         evalJs.set('result', result)
-        evalResult = evalJs.eval(''.join(jlst))
-        if evalResult is None:
-            result = evalJs.get('result')
-        else:
-            result = evalResult
-    return [result]
+        result = evalJs.eval(''.join(jlst))
+
+    if isinstance(result, list):
+        return result
+    else:
+        return [result]
