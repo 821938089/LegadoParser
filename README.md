@@ -2,20 +2,30 @@
 
 阅读3.0书源规则解析库
 
-支持大多数`Default Jsonpath Xpath Regex`规则
+支持大多数 `Default` `Jsonpath` `Xpath` `Regex` 规则
 
-支持部分`Js`规则
+支持部分 `Js` 规则
 
-支持部分特殊规则，如`{{ }}`、`{$. }`、正则替换
+支持部分特殊规则，如 `{{ }}`、`{$. }`、正则替换
 
 Windows下需要Python 3.9版本，其他Python版本的部分依赖安装需要自行编译
 
 ## 安装
 
+### Windows （Python 3.9）
+
 ```bash
 git clone https://github.com/821938089/LegadoParser
 cd LegadoParser
-pip install -r requirements.txt
+pip install -r requirements_win.txt
+```
+
+### Linux/WSL （Python 3.8+）
+
+```bash
+git clone https://github.com/821938089/LegadoParser
+cd LegadoParser
+pip install -r requirements_linux.txt
 ```
 
 ## 基础用法
