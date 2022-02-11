@@ -1,11 +1,16 @@
 import json
+import sys
 from LegadoParser2.RuleUrl.Url import parseUrl, getContent, urljoin
 from LegadoParser2.RuleJs.JS import EvalJs
 from LegadoParser2.RulePacket import getRuleObj, trimBookSource
-from LegadoParser2.html5_parser import parse
 from lxml.etree import HTML
 from LegadoParser2.RuleEval import getElements, getString, getStrings
 from LegadoParser2.FormatUtils import Fmt
+
+if sys.platform == 'win32':
+    from LegadoParser2.html5_parser import parse
+else:
+    from html5_parser import parse
 
 
 def getBookInfo(bS, url):

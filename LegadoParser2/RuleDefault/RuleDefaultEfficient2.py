@@ -1,17 +1,21 @@
-
+import re
+import sys
 
 from lxml.html import html5parser, tostring
 from lxml.html.html5parser import HTMLParser
 from lxml.etree import register_namespace, _Element, HTML
 from lxml.cssselect import CSSSelector
 from LegadoParser2.FormatUtils import Fmt
-import re
-
 from LegadoParser2.RuleType import RuleType
-from LegadoParser2.html5_parser import parse
-# 高效Html处理
 
-# 高效Html5解析器，但是Windows下安装非常繁琐 https://html5-parser.readthedocs.io/en/latest/
+if sys.platform == 'win32':
+    from LegadoParser2.html5_parser import parse
+else:
+    from html5_parser import parse
+
+# 高效Html处理
+# 高效Html5解析器，但是Windows下安装非常繁琐
+# https://html5-parser.readthedocs.io/en/latest/
 
 
 def getElementsByDefault(content, compileRule):

@@ -1,7 +1,7 @@
-from LegadoParser2 import search
-from LegadoParser2 import getBookInfo
-from LegadoParser2 import getChapterList
-from LegadoParser2 import getChapterContent
+from LegadoParser2.Search import search
+from LegadoParser2.BookInfo import getBookInfo
+from LegadoParser2.ChapterList import getChapterList
+from LegadoParser2.Chapter import getChapterContent
 import json
 from pprint import pprint
 

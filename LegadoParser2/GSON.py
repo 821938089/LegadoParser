@@ -3,12 +3,18 @@ from json.decoder import JSONDecodeError
 import hjson
 import ast
 
+# 候选Json解析库
+# https://pypi.org/project/json5/
 
 class GSONParseError(Exception):
     '''GSON解析失败'''
 
 
 def parse(text):
+    """
+    多种类似Json格式解析
+    解析单引号、无引号的类Json字符串
+    """
     if isinstance(text, (dict, list)):
         return text
     result = None

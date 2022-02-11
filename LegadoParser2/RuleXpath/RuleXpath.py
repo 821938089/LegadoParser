@@ -1,8 +1,12 @@
+import sys
 from lxml.html import Element, tostring, html5parser
 from lxml.html.html5parser import HTMLParser
 from lxml.etree import HTML
-from LegadoParser2.html5_parser import parse
 from LegadoParser2.RuleType import RuleType
+if sys.platform == 'win32':
+    from LegadoParser2.html5_parser import parse
+else:
+    from html5_parser import parse
 
 
 def getElementsByXpath(content, rule):
