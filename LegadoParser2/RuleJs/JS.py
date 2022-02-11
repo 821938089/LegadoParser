@@ -19,7 +19,7 @@ class EvalJs(object):
         self.context = quickjs.Context()
         self.VAR = {}  # 存放put get方法的内容
         if not _jsCache:
-            filePath = os.path.dirname(os.path.abspath('__file__'))
+            filePath = os.path.dirname(os.path.abspath(__file__))
             with open(os.path.join(filePath, 'jsExtension.js'), 'r') as f:
                 _jsCache = f.read()
                 self.context.eval(_jsCache)
