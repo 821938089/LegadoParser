@@ -25,6 +25,7 @@ pip install -r requirements_win.txt
 ```bash
 git clone https://github.com/821938089/LegadoParser
 cd LegadoParser
+sudo apt-get install libxml2 libxml2-dev
 pip install -r requirements_linux.txt
 ```
 

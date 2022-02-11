@@ -1,11 +1,10 @@
 import re
 import sys
 
-from lxml.html import html5parser, tostring
-from lxml.html.html5parser import HTMLParser
-from lxml.etree import register_namespace, _Element, HTML
+from lxml.html import tostring
+from lxml.etree import HTML
 from lxml.cssselect import CSSSelector
-from LegadoParser2.FormatUtils import Fmt
+# from LegadoParser2.FormatUtils import Fmt
 from LegadoParser2.RuleType import RuleType
 
 if sys.platform == 'win32':
