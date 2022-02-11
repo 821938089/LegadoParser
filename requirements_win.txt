@@ -1,4 +1,4 @@
-httpx==0.21.1
+httpx[http2,brotli]==0.21.1
 chardet==3.0.4
 lxml==4.6.3
 cssselect==1.1.0
