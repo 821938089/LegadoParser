@@ -1,6 +1,4 @@
 import os
-import subprocess
-import sys
 import base64
 import logging
 import time
