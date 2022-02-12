@@ -16,12 +16,15 @@ else:
 
 def getChapterContent(bS, url, nextChapterUrl=''):
     trimBookSource(bS)
+    ruleContent = bS['ruleContent']
     evalJs = EvalJs(bS)
     if bS.get('header', None):
         headers = bS['header']
     else:
         headers = ''
     urlObj = parseUrl(url, evalJs, headers=headers)
+    if ruleContent.get('webJs', None):
+        urlObj['webJs'] = ruleContent['webJs']
     content, __ = getContent(urlObj)
     return parseContent(bS, urlObj, content.strip(), evalJs, nextChapterUrl=nextChapterUrl)
 

@@ -1,10 +1,12 @@
 from LegadoParser2.RuleUrl.Url import parseUrl, getContent, urljoin
 from LegadoParser2.RuleJs.JS import EvalJs
 from LegadoParser2.RulePacket import getRuleObj, trimBookSource
-from lxml.etree import HTML
 from LegadoParser2.RuleEval import getElements, getString, getStrings
+from LegadoParser2.utils import validateFlag
 from concurrent.futures import ThreadPoolExecutor
 
+
+# from lxml.etree import HTML
 
 def getChapterList(bS, url):
     trimBookSource(bS)
@@ -49,7 +51,6 @@ def parseChapterList(bS, urlObj, content, evalJs):
             nextTocUrls = getStrings(content, rulesNextTocUrl, evalJs)
         else:
             nextTocUrls = None
-        falseSet = {'False', 'None', '0'}
         for e in elements:
             chapter = {}
             if ruleToc.get('chapterName', None):
@@ -60,22 +61,13 @@ def parseChapterList(bS, urlObj, content, evalJs):
                     chapter['url'] = urljoin(urlObj['url'], chapter['url'])
             if ruleToc.get('isPay', None):
                 chapter['isPay'] = getString(e, rulesIsPay, evalJs)
-                if chapter['isPay'] and chapter['isPay'] in falseSet:
-                    chapter['isPay'] = False
-                else:
-                    chapter['isPay'] = True
+                chapter['isPay'] = validateFlag(chapter['isPay'])
             if ruleToc.get('isVip', None):
                 chapter['isVip'] = getString(e, rulesIsVip, evalJs)
-                if chapter['isVip'] and chapter['isVip'] in falseSet:
-                    chapter['isVip'] = False
-                else:
-                    chapter['isVip'] = True
+                chapter['isVip'] = validateFlag(chapter['isVip'])
             if ruleToc.get('isVolume', None):
                 chapter['isVolume'] = getString(e, rulesIsVolume, evalJs)
-                if chapter['isVolume'] and chapter['isVolume'] in falseSet:
-                    chapter['isVolume'] = False
-                else:
-                    chapter['isVolume'] = True
+                chapter['isVolume'] = validateFlag(chapter['isVolume'])
             if ruleToc.get('updateTime', None):
                 chapter['updateTime'] = getString(e, rulesUpdateTime, evalJs)
             if chapter['name']:

@@ -4,15 +4,18 @@
 
 """
 from LegadoParser2.RuleJs.JS import EvalJs
-from urllib.parse import urlparse
 from LegadoParser2.RuleEval import getElements, getStrings, getString
 from LegadoParser2.RulePacket import getRuleObj, trimBookSource
-from httpx._exceptions import RequestError
 from LegadoParser2.RuleUrl.Url import parseUrl, getContent
-from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 from LegadoParser2.RuleUrl.BodyType import Body
 from LegadoParser2.FormatUtils import Fmt
 from LegadoParser2.BookInfo import parseBookInfo
+from LegadoParser2.config import DEBUG_MODE
+# from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
+# from httpx._exceptions import RequestError
+# from urllib.parse import urlparse
+
+
 # ast.literal_eval 解析单引号的字典 https://stackoverflow.com/questions/4162642/single-vs-double-quotes-in-json
 # 参数 bS:bookSource 单个书源规则json dict类型
 
@@ -141,7 +144,8 @@ def getSearchResult(bS, searchObj, content, evalJS, **kwargs):
 
         except IndexError as e:
             if not len(searchResult):
-                raise
+                if DEBUG_MODE:
+                    raise
             # else:
             #     print('部分书籍解析失败')
         else:
