@@ -43,7 +43,7 @@ class WebView(object):
         # 平滑滚动到底
         self.driver.execute_script(
             "window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})")
-        # time.sleep(0.7)
+        time.sleep(0.7)
         if javaScript:
             return self.driver.execute_script(javaScript)
         else:
@@ -82,6 +82,14 @@ def getDriverInstance(userAgent=USER_AGENT):
     options.add_argument("--mute-audio")
     options.add_argument(f"--user-data-dir={user_data_dir}")
     options.add_argument("--lang=zh-CN,zh")
+    options.add_argument("--disable-application-cache")
+    # 不显示恢复标签提示
+    # https://stackoverflow.com/questions/51269896/selenium-disable-restore-pages-poup
+    prefs = {'exit_type': 'Normal'}
+    options.add_experimental_option("prefs", {'profile': prefs})
+    # 防止打印一些无用的日志
+    # https://blog.csdn.net/qq_24269969/article/details/111173932
+    options.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     # 去除webdriver痕迹
     # https://zhuanlan.zhihu.com/p/328768200
     options.add_argument("disable-blink-features=AutomationControlled")
