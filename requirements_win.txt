@@ -5,3 +5,4 @@ cssselect==1.1.0
 hjson==3.0.2
 jsonpath_ng==1.5.3
 quickjs==1.17.0
+selenium==4.1.0
