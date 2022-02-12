@@ -61,6 +61,8 @@ def getDriverInstance():
         options.headless = True
         options.add_argument("--mute-audio")
         options.add_argument("--headless")
+        options.add_argument(
+            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
         service = Service(executable_path=ChromeDriverManager(log_level=logging.NOTSET).install())
         driver = webdriver.Chrome(service=service, options=options)
     return driver
