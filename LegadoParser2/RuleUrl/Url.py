@@ -114,26 +114,25 @@ def getContent(urlObj):
     bodyType = urlObj['bodytype']
     body = urlObj['body']
     url = urlparse(urlObj['url'])
-    url = url._replace(query=urlencode(parse_qs(url.query), doseq=True, encoding=charset))
+    url = url._replace(query=urlencode(
+        parse_qs(url.query, keep_blank_values=True), doseq=True, encoding=charset))
     url = urlunparse(url)
     userAgent = urlObj['headers']['User-Agent']
-    if body and bodyType == Body.FORM:
-        body = urlencode(parse_qs(body), doseq=True, encoding=charset)
-    elif body:
-        body = body.encode(charset)
+    respone = None
+
     if urlObj['webView'] and urlObj['method'] == 'GET':
         webView = WebView(userAgent)
         content = webView.getResponseByUrl(url, urlObj['webJs'])
-        respone = None
-
+    elif urlObj['webView'] and urlObj['method'] == 'POST' and bodyType == Body.FORM:
+        webView = WebView(userAgent)
+        content = webView.getResponseByPost(url, body, charset, urlObj['webJs'])
     else:
+        if body and bodyType == Body.FORM:
+            body = urlencode(parse_qs(body, keep_blank_values=True), doseq=True, encoding=charset)
+        elif body:
+            body = body.encode(charset)
         content, __, respone = req(url, header=urlObj['headers'],
                                    method=method, post_data=body)
-
-    if urlObj['webView'] and urlObj['method'] == 'POST':
-        webView = WebView(userAgent)
-        content = webView.getResponseByHtml(content, urlObj['webJs'])
-        respone = None
 
     if respone:
         urlObj['finalurl'] = str(respone.url)

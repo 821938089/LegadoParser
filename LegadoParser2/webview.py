@@ -1,33 +1,31 @@
+from lib2to3.pgen2 import driver
 import os
 import base64
 import logging
 import time
-import atexit
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
 from LegadoParser2.config import DEBUG_MODE, USER_AGENT
-_driver = None
+from urllib.parse import parse_qs
 
 
 class WebView(object):
     def __init__(self, userAgent=USER_AGENT):
-        if userAgent != USER_AGENT:
-            self.driver = getDriverInstance(userAgent)
-        elif not self.driver:
-            self.driver = getDriverInstance()
+        self.driver = createDriverInstance(userAgent)
+        if DEBUG_MODE:
+            global _driver
+            try:
+                _driver.quit()
+            except:
+                pass
+            _driver = self.driver
 
-    @property
-    def driver(self) -> WebDriver:
-        global _driver
-        return _driver
-
-    @driver.setter
-    def driver(self, value):
-        global _driver
-        _driver = value
+    def __del__(self):
+        if not DEBUG_MODE:
+            self.driver.quit()
 
     def getResponseByUrl(self, url, javaScript=''):
         # 定义 navigator.platform 为空
@@ -47,29 +45,26 @@ class WebView(object):
         else:
             return self.driver.page_source
 
-    def getResponseByHtml(self, html, javaScript=''):
+    def getResponseByPost(self, url, formData, charset='utf-8', javaScript=''):
         self.driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
                                     'source': "Object.defineProperty(navigator,'platform',{value:''})"})
         # https://stackoverflow.com/questions/22538457/put-a-string-with-html-javascript-into-selenium-webdriver
-        html_bs64 = base64.b64encode(html.encode('utf-8')).decode()
+        html = createPostFormHtml(url, formData, charset)
+        html_bs64 = base64.b64encode(html.encode(charset)).decode()
         self.driver.get("data:text/html;base64," + html_bs64)
-        self.driver.execute_script(
-            "window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})")
-        time.sleep(0.7)
+        self.driver.find_element_by_id('post').click()
+        # 跳转后等待加载完成
+        # https://stackoverflow.com/questions/36590274/selenium-how-to-wait-until-page-is-completely-loaded
+        WebDriverWait(self.driver, 10).until(
+            lambda d: d.execute_script("return document.readyState") == "complete")
+
         if javaScript:
             return self.driver.execute_script(javaScript)
         else:
             return self.driver.page_source
 
 
-@atexit.register
-def closeBroswer():
-    global _driver
-    if _driver:
-        _driver.quit()
-
-
-def getDriverInstance(userAgent=USER_AGENT):
+def createDriverInstance(userAgent=USER_AGENT):
     options = webdriver.ChromeOptions()
     user_data_dir = os.path.join(os.path.abspath("."), 'webview\AutomationProfile')
     # options.set_capability("detach", True)
@@ -81,6 +76,9 @@ def getDriverInstance(userAgent=USER_AGENT):
     options.add_argument(f"--user-data-dir={user_data_dir}")
     options.add_argument("--lang=zh-CN,zh")
     options.add_argument("--disable-application-cache")
+    options.add_argument('--ignore-certificate-errors')
+    # 禁用 sec-ch-* 协议头
+    options.add_argument('--disable-features=UserAgentClientHint')
     # 不显示恢复标签提示
     # https://stackoverflow.com/questions/51269896/selenium-disable-restore-pages-poup
     prefs = {'exit_type': 'Normal'}
@@ -95,3 +93,22 @@ def getDriverInstance(userAgent=USER_AGENT):
     service = Service(executable_path=ChromeDriverManager(log_level=logging.NOTSET).install())
     driver = webdriver.Chrome(service=service, options=options)
     return driver
+
+
+def createPostFormHtml(url, formData, charset):
+    # https://stackoverflow.com/questions/10494417/making-a-post-request-in-selenium-without-filling-a-form
+    source = f'''<html>
+    <head>
+        <meta charset="{charset}">
+    </head>
+    <body>
+        <form action="{url}" method="post" id="postform">\n'''
+    formDict = parse_qs(formData, keep_blank_values=True)
+    for name, values in formDict.items():
+        for value in values:
+            source += f'            <input type="hidden" name="{name}" value="{value}">\n'
+    source += '''            <input type="submit" id="post">
+        </form>
+    </body>
+</html>'''
+    return source
