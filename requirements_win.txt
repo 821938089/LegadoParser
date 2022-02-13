@@ -7,3 +7,4 @@ jsonpath_ng==1.5.3
 quickjs==1.17.0
 selenium==4.1.0
 webdriver-manager==3.5.2
+fs==2.4.15

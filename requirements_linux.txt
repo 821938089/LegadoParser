@@ -7,3 +7,4 @@ quickjs==1.17.0
 html5-parser==0.4.10
 selenium==4.1.0
 webdriver-manager==3.5.2
+fs==2.4.15
