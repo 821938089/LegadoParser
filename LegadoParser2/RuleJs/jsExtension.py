@@ -5,7 +5,6 @@ from fs.zipfs import ZipFS
 from charset_normalizer import from_bytes
 from LegadoParser2.RulePacket import getRuleObj
 from LegadoParser2.RuleEval import getString, getStrings
-import re
 
 
 def getZipStringContent(url, path):
