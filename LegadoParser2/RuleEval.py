@@ -16,6 +16,7 @@ def getElements(content, rulesObj, evalJs):
             if rule['type'] == RuleType.DefaultOrEnd:
                 rule['type'] = RuleType.Json
     try:
+        reverse = False
         for rule in rulesObj:
             if rule['type'] == RuleType.Put:
                 putProcessor(content, rule, evalJs)
@@ -30,11 +31,15 @@ def getElements(content, rulesObj, evalJs):
                 content = jsProcessor(content, evalJs, rule)
             elif rule['type'] == RuleType.Regex:
                 content = regexProcessor(content, rule)
+            elif rule['type'] == RuleType.Order:
+                reverse = rule['preProcess']['reverse']
     except:
         if DEBUG_MODE:
             raise
         else:
             content = []
+    if reverse:
+        content.reverse()
     return content
 
 

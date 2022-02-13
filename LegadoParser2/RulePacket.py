@@ -202,6 +202,11 @@ def preProcessRule(packedRules):
                 rule['preProcess']['putRules'] = GSON.parse('{' + rule['subRules'][0][1] + '}')
                 for key, value in rule['preProcess']['putRules'].items():
                     rule['preProcess']['compiledPutRules'][key] = getRuleObj(value)
+        elif rule['type'] == RuleType.Order:
+            rule['preProcess'] = {'reverse': False}
+            if rule['rules'][0] == '-':
+                rule['preProcess']['reverse'] = True
+
     return packedRules
 
 
