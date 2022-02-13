@@ -10,7 +10,7 @@ currentProxies = ''
 #     print(request.headers)
 
 
-def req(url, cellphone_mode=False, cookies='', header={}, method=0, post_data_type=1, post_data='', post_json={}, return_cookies='', proxy='', proxy_type='', timeout=10, file_name='', allow_redirects=True):
+def req(url, cellphone_mode=False, cookies='', header={}, method=0, post_data_type=1, post_data='', post_json={}, return_cookies='', proxy='', proxy_type='', timeout=10, file_name='', file_obj=None, allow_redirects=True):
     global requests, currentProxies
 
     tmp_header = {}
@@ -64,17 +64,22 @@ def req(url, cellphone_mode=False, cookies='', header={}, method=0, post_data_ty
 
     if method == 0:  # get方式访问
         # print (tmp_cookies)
-        if file_name == '':
+        if file_name == '' and not file_obj:
             r = requests.get(
                 url, headers=tmp_header, timeout=timeout, follow_redirects=allow_redirects)
         else:
             with requests.stream('GET', url, headers=tmp_header,
                                  timeout=timeout, follow_redirects=allow_redirects) as r:
-                with open(file_name, "wb") as file:
+                if not file_obj:
+                    with open(file_name, "wb") as file:
+                        for chunk in r.iter_bytes(chunk_size=1024):
+                            if chunk:
+                                file.write(chunk)
+                else:
                     for chunk in r.iter_bytes(chunk_size=1024):
                         if chunk:
-                            file.write(chunk)
-                return
+                            file_obj.write(chunk)
+            return
         # print (r.text)
     if method == 1:  # post方式访问
         if post_data and post_data_type == 0:

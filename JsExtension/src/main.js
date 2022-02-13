@@ -12,16 +12,16 @@ java.md5Encode16 = function (message) {
 }
 
 java.put = function (key, value) {
-    py_put(key, value)
+    pyPut(key, value)
     return value
 }
 
 java.get = function (key) {
-    return py_get(key)
+    return pyGet(key)
 }
 
 java.ajax = function (url) {
-    return py_ajax(url)
+    return pyAjax(url)
 }
 
 java.aesBase64DecodeToString = function (str, key, transformation, iv) {
@@ -60,8 +60,16 @@ java.aesBase64DecodeToString = function (str, key, transformation, iv) {
     let plaintext = decrypted.toString(CryptoJS.enc.Utf8)
     return plaintext
 }
+
 java.timeFormat = function (time) {
     return dayjs(time).format('YYYY/MM/DD HH:mm')
 }
 
+java.getZipStringContent = function (url, path) {
+    return pyGetZipStringContent(url, path)
+}
+
+java.getString = function (rule, isUrl) {
+    return pyGetString(rule, isUrl)
+}
 export default java

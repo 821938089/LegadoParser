@@ -16,6 +16,7 @@ def getChapterList(bS, url):
     else:
         headers = ''
     urlObj = parseUrl(url, evalJs, headers=headers)
+    evalJs.set('baseUrl', url)
     content, __ = getContent(urlObj)
     return parseChapterList(bS, urlObj, content.strip(), evalJs)
 

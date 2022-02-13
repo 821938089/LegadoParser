@@ -97,7 +97,11 @@ def getElementsByDefault(content, compileRule):
 
 
 def getStringsByDefault(content, compileRule):
-
+    if isinstance(content, str):
+        try:
+            content = parse(content, sanitize_names=False)
+        except:
+            content = HTML(content)
     if not isinstance(content, list):
         content = [content]
     rule = compileRule['rule']

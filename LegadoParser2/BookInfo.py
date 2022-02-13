@@ -21,6 +21,7 @@ def getBookInfo(bS, url):
     else:
         headers = ''
     urlObj = parseUrl(url, evalJs, headers=headers)
+    evalJs.set('baseUrl', url)
     content, __ = getContent(urlObj)
     return parseBookInfo(bS, urlObj, content.strip(), evalJs)
 

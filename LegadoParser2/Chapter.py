@@ -25,6 +25,7 @@ def getChapterContent(bS, url, nextChapterUrl=''):
     urlObj = parseUrl(url, evalJs, headers=headers)
     if ruleContent.get('webJs', None):
         urlObj['webJs'] = ruleContent['webJs']
+    evalJs.set('baseUrl', url)
     content, __ = getContent(urlObj)
     return parseContent(bS, urlObj, content.strip(), evalJs, nextChapterUrl=nextChapterUrl)
 

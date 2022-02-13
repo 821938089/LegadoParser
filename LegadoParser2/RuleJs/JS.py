@@ -9,6 +9,8 @@ from LegadoParser2.RuleUrl.Url import parseUrl, getContent
 from quickjs import Object
 import os
 from LegadoParser2.config import DEBUG_MODE
+from LegadoParser2.RuleJs.jsExtension import getZipStringContent, getStringJs
+import re
 _jsCache = ''
 
 
@@ -27,9 +29,11 @@ class EvalJs(object):
         else:
             self.context.eval(_jsCache)
 
-        self.context.add_callable('py_put', self.putVAR)
-        self.context.add_callable('py_get', self.getVAR)
-        self.context.add_callable('py_ajax', self.ajax)
+        self.context.add_callable('pyPut', self.putVAR)
+        self.context.add_callable('pyGet', self.getVAR)
+        self.context.add_callable('pyAjax', self.ajax)
+        self.context.add_callable('pyGetZipStringContent', getZipStringContent)
+        self.context.add_callable('pyGetString', self.getString)
 
     def set(self, name, value):
         if isinstance(value, (list, dict)):
@@ -48,6 +52,9 @@ class EvalJs(object):
 
     def eval(self, expression):
         # print(expression)
+        # 替换变量定义中的let和const关键字为var，防止报重复定义变量错误
+        varRegex = re.compile(r'(let|const)\s+([a-zA-z_$][\w$]*)(\s*[=;]{0,1})')
+        expression = varRegex.sub(r'var \2\3', expression)
         result = self.context.eval(expression)
         if isinstance(result, Object):
             return json.loads(result.json())
@@ -78,6 +85,9 @@ class EvalJs(object):
                 print(f'ajax url {url}')
                 print(traceback.format_exc())
         return content
+
+    def getString(self, rule, isUrl):
+        return getStringJs(self.get('result'), self, rule, isUrl)
 
 
 # def getContent(searchObj):
