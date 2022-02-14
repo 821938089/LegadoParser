@@ -38,6 +38,8 @@ def getElements(content, rulesObj, evalJs):
             raise
         else:
             content = []
+    if content and isinstance(content[-1], tuple):
+        content = content[:-1]
     if reverse:
         content.reverse()
     return content

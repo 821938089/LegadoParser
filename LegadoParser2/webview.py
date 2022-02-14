@@ -41,7 +41,7 @@ class WebView(object):
             "window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})")
         time.sleep(0.7)
         if javaScript:
-            return self.driver.execute_script(javaScript)
+            return self.driver.execute_script('return ' + javaScript)
         else:
             return self.driver.page_source
 
@@ -59,7 +59,7 @@ class WebView(object):
             lambda d: d.execute_script("return document.readyState") == "complete")
 
         if javaScript:
-            return self.driver.execute_script(javaScript)
+            return self.driver.execute_script('return ' + javaScript)
         else:
             return self.driver.page_source
 

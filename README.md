@@ -8,7 +8,7 @@
 
 支持部分特殊规则，如 `{{ }}`、`{$. }`、正则替换
 
-支持 `webView` ，使用Selenium驱动，需要安装[`Chrome`](https://www.google.cn/chrome/)浏览器
+支持 `webView` ，使用Selenium驱动，需要安装`Chrome`浏览器
 
 Windows下需要Python 3.9版本，其他Python版本的部分依赖安装需要自行编译
 
@@ -33,7 +33,7 @@ pip install -r requirements_linux.txt
 
 ## 基础用法
 
-详见 [`usage.py`](https://github.com/821938089/LegadoParser/blob/main/usage.py)
+详见 `usage.py`
 
 ## 高级API
 
