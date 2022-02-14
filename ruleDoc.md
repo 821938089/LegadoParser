@@ -353,7 +353,7 @@
          +java.md5Encode(str: String)
          +java.md5Encode16(str: String)
 
-         //格式化时间戳，返回类型String
+         +//格式化时间戳，返回类型String
          +java.timeFormat(timestamp: Long)
          +java.timeFormat(time: String)
 
