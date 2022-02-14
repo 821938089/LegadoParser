@@ -1,5 +1,3 @@
-from lib2to3.pgen2 import driver
-import os
 import base64
 import logging
 import time
@@ -10,11 +8,19 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from LegadoParser2.config import DEBUG_MODE, USER_AGENT
 from urllib.parse import parse_qs
+try:
+    from LegadoParser2.fontutils import getAllFontFaceUrl
+except:
+    getAllFontFaceUrl = None
+
+# bot 检测
+# https://bot.sannysoft.com/
 
 
 class WebView(object):
     def __init__(self, userAgent=USER_AGENT):
         self.driver = createDriverInstance(userAgent)
+        self.allFontFaceUrl = None
         if DEBUG_MODE:
             global _driver
             try:
@@ -26,6 +32,8 @@ class WebView(object):
     def __del__(self):
         if not DEBUG_MODE:
             self.driver.quit()
+
+        # self.driver.quit()
 
     def getResponseByUrl(self, url, javaScript=''):
         # 定义 navigator.platform 为空
@@ -43,6 +51,8 @@ class WebView(object):
         if javaScript:
             return self.driver.execute_script('return ' + javaScript)
         else:
+            if getAllFontFaceUrl:
+                self.allFontFaceUrl = self.driver.execute_script(getAllFontFaceUrl)
             return self.driver.page_source
 
     def getResponseByPost(self, url, formData, charset='utf-8', javaScript=''):
@@ -66,16 +76,16 @@ class WebView(object):
 
 def createDriverInstance(userAgent=USER_AGENT):
     options = webdriver.ChromeOptions()
-    user_data_dir = os.path.join(os.path.abspath("."), 'webview\AutomationProfile')
+    # user_data_dir = os.path.join(os.path.abspath("."), 'webview\AutomationProfile')
     # options.set_capability("detach", True)
     if not DEBUG_MODE:
         options.headless = True
         options.add_argument("--headless")
         options.add_argument("--disable-gpu")
     options.add_argument("--mute-audio")
-    options.add_argument(f"--user-data-dir={user_data_dir}")
+    # options.add_argument(f"--user-data-dir={user_data_dir}")
     options.add_argument("--lang=zh-CN,zh")
-    options.add_argument("--disable-application-cache")
+    # options.add_argument("--disable-application-cache")
     options.add_argument('--ignore-certificate-errors')
     # 禁用 sec-ch-* 协议头
     options.add_argument('--disable-features=UserAgentClientHint')

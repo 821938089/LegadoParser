@@ -1,0 +1,2 @@
+fonttools==4.29.1
+cnocr==2.1.0

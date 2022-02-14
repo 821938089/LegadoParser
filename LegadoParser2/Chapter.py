@@ -7,7 +7,11 @@ from LegadoParser2.RulePacket import getRuleObj, trimBookSource
 from lxml.etree import HTML
 from LegadoParser2.RuleEval import getElements, getString, getStrings
 from concurrent.futures import ThreadPoolExecutor
-
+from LegadoParser2.config import DEBUG_MODE
+try:
+    from LegadoParser2.fontutils import checkPUA, fixPUAStr, collectPUAChars
+except ImportError:
+    pass
 if sys.platform == 'win32':
     from LegadoParser2.html5_parser import parse
 else:
@@ -96,6 +100,15 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
     if ruleContent.get('replaceRegex', None):
         chapterContent['content'] = getString(
             chapterContent['content'], rulesReplaceRegex, evalJs, rawContent=_content)
+    try:
+        if checkPUA(chapterContent['content']):
+            if DEBUG_MODE:
+                print('parseContent 发现PUA字符，尝试OCR修复')
+            PUAChars = collectPUAChars(chapterContent['content'])
+            chapterContent['content'] = fixPUAStr(
+                chapterContent['content'], urlObj['allFontFaceUrl'], PUAChars)
+    except NameError:
+        pass
 
     return chapterContent
 

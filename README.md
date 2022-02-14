@@ -33,6 +33,14 @@ sudo apt-get install libxml2 libxml2-dev
 pip install -r requirements_linux.txt
 ```
 
+### OCR可选安装
+
+~~~bash
+pip install -r requiremens_ocr.txt
+~~~
+
+安装后使用webView获取章节内容会自动检测是否需要OCR
+
 ## 基础用法
 
 详见 [`usage.py`](https://github.com/821938089/LegadoParser/blob/main/usage.py)

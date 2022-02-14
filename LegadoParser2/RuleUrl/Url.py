@@ -18,7 +18,8 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
         'headers': {},
         'bodytype': None,
         'webView': False,
-        'webJs': ''
+        'webJs': '',
+        'allFontFaceUrl': None
     }
     bodyType = None
     ruleObj = getUrlRuleObj(ruleUrl)
@@ -96,7 +97,7 @@ def urljoin(base, url):
     HttpCon, AddRoot = base.split('://')
     AddRoot = AddRoot.split('/')[0]
     if url[:2] == '//':
-        return HttpCon + url
+        return HttpCon + ':' + url
     elif url[:1] == '/':
         return HttpCon + '://' + AddRoot + url
     else:
@@ -123,9 +124,11 @@ def getContent(urlObj):
     if urlObj['webView'] and urlObj['method'] == 'GET':
         webView = WebView(userAgent)
         content = webView.getResponseByUrl(url, urlObj['webJs'])
+        urlObj['allFontFaceUrl'] = webView.allFontFaceUrl
     elif urlObj['webView'] and urlObj['method'] == 'POST' and bodyType == Body.FORM:
         webView = WebView(userAgent)
         content = webView.getResponseByPost(url, body, charset, urlObj['webJs'])
+        urlObj['allFontFaceUrl'] = webView.allFontFaceUrl
     else:
         if body and bodyType == Body.FORM:
             body = urlencode(parse_qs(body, keep_blank_values=True), doseq=True, encoding=charset)
@@ -138,6 +141,13 @@ def getContent(urlObj):
         urlObj['finalurl'] = str(respone.url)
     else:
         urlObj['finalurl'] = url
+
+    if urlObj['allFontFaceUrl']:
+        for fontFaceUrl in urlObj['allFontFaceUrl']:
+            if 'srcList' in fontFaceUrl:
+                for urlDict in fontFaceUrl['srcList']:
+                    urlDict['url'] = urljoin(urlObj['finalurl'], urlDict['url'])
+
     if respone and respone.history:
         urlObj['redirected'] = True
     else:
