@@ -349,7 +349,7 @@
          -java.base64Encode(str: String)
          -java.base64Encode(str: String, flags: Int)
 
-         //md5编码，返回类型String?
+         +//md5编码，返回类型String?
          +java.md5Encode(str: String)
          +java.md5Encode16(str: String)
 
