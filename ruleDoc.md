@@ -314,6 +314,7 @@
        * 下面是一些常用的函数，详见[JsExtensions.kt](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt)
 
          【实现细节差异】
+
          绿色为支持，红色为不支持。
 
          ```diff
