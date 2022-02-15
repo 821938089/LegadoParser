@@ -37,6 +37,13 @@ def collectPUAChars(text):
     return chars
 
 
+def woff2ttf(woffFile, ttfFile):
+    # https://github.com/fonttools/fonttools/issues/1694
+    font = TTFont(woffFile)
+    font.flavor = None
+    font.save(ttfFile)
+
+
 def getFontUrl(allFontFaceUrl):
     # 获取支持的字体文件Url
     if not allFontFaceUrl:
@@ -46,7 +53,10 @@ def getFontUrl(allFontFaceUrl):
     for fontFaceUrl in allFontFaceUrl:
         if 'srcList' in fontFaceUrl:
             for urlDict in fontFaceUrl['srcList']:
-                if urlDict['format'] in {'truetype', 'opentype'}:
+                if not urlDict['format']:
+                    if urlDict['url'].find('.ttf') != -1 or urlDict['url'].find('.woff') != -1 or urlDict['url'].find('.woff2') != -1:
+                        return urlDict['url']
+                elif urlDict['format'] in {'woff', 'woff2', 'truetype', 'opentype'}:
                     return urlDict['url']
     return ''
 
@@ -114,7 +124,7 @@ def fixPUAStr(text, allFontFaceUrl, PUAChars):
 
     if not fontUrl:
         if DEBUG_MODE:
-            print('getCorrectStr 未找到可以解析的字体')
+            print('fixPUAStr 未找到可以解析的字体')
         return text
 
     headers = {'User-Agent': USER_AGENT}
@@ -128,16 +138,23 @@ def fixPUAStr(text, allFontFaceUrl, PUAChars):
                 req(fontUrl, header=headers, file_obj=mem_font_file)
         except:
             if DEBUG_MODE:
-                print('getCorrectStr 字体文件下载失败')
+                print('fixPUAStr 字体文件下载失败')
             return text
         if mem_font_file.tell() > 0:
             # https://stackoverflow.com/questions/43834362/python-unicode-rendering-how-to-know-if-a-unicode-character-is-missing-from-the
             # https://fonttools.readthedocs.io/en/latest/ttLib/ttFont.html
             font = TTFont(mem_font_file)
+            if font.flavor in {'woff', 'woff2'}:
+                # 转换 woff woff2 到 ttf
+                # https://github.com/fonttools/fonttools/issues/1694
+                font.flavor = None
+                mem_font_file.seek(0)
+                font.save(mem_font_file)
+
             PUAChars = list(filter(lambda x: checkCharInFont(x, font), PUAChars))
             if not PUAChars:
                 if DEBUG_MODE:
-                    print('getCorrectStr 字体文件中未找到可以替换的字')
+                    print('fixPUAStr 字体文件中未找到可以替换的字')
                 return text
             charDict = ocrFontPng(PUAChars, mem_font_file, mem_fs)
             for old, new in charDict.items():
@@ -146,7 +163,7 @@ def fixPUAStr(text, allFontFaceUrl, PUAChars):
 
         else:
             if DEBUG_MODE:
-                print('getCorrectStr 字体文件为空')
+                print('fixPUAStr 字体文件为空')
             return text
 
 
@@ -166,18 +183,29 @@ getAllFontFaceUrl = \
                     let srcList = []
                     fontFamily = cssRule.style.fontFamily
                     src = cssRule.style.src
-                    urlRegex = /url\(["']{0,1}(.*?)["']{0,1}\)\s+format\(["'](.*?)["']\)/g
+                    urlRegex =
+                        /url\(["']{0,1}(.*?)["']{0,1}\)\s*format\(["'](.*?)["']\)|url\(["']{0,1}(.*?)["']{0,1}\)/g
                     if (src) {
                         for (const match of src.matchAll(urlRegex)) {
-                            const srcObj = { url: match[1], format: match[2] }
+                            let srcObj
+                            if (match[1]) {
+                                srcObj = { url: match[1], format: match[2] }
+                            } else {
+                                srcObj = { url: match[3], format: null }
+                            }
                             srcList.push(srcObj)
                         }
                     }
-                    fontFaceList.push({ fontFamily, srcList })
+                    if (!fontFaceList.find(o => o.fontFamily === fontFamily)) {
+                        fontFaceList.push({ fontFamily, srcList })
+                    }
                 }
             }
-        } catch (e) {}
+        } catch (e) {
+            fontFaceList.push({ href: styleSheet.href })
+        }
     }
     return fontFaceList
 }
-return getAllFontFaceUrl()'''
+return getAllFontFaceUrl()
+'''
