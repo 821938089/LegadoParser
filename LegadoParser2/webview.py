@@ -49,7 +49,11 @@ class WebView(object):
             "window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})")
         time.sleep(0.7)
         if javaScript:
-            return self.driver.execute_script('return ' + javaScript)
+            result = ''
+            while not result:
+                result = self.driver.execute_script('return ' + javaScript)
+                time.sleep(0.3)
+            return result
         else:
             if getAllFontFaceUrl:
                 self.allFontFaceUrl = self.driver.execute_script(getAllFontFaceUrl)
@@ -69,7 +73,11 @@ class WebView(object):
             lambda d: d.execute_script("return document.readyState") == "complete")
 
         if javaScript:
-            return self.driver.execute_script('return ' + javaScript)
+            result = ''
+            while not result:
+                result = self.driver.execute_script('return ' + javaScript)
+                time.sleep(0.3)
+            return result
         else:
             return self.driver.page_source
 
