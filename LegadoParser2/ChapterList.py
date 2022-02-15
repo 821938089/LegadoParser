@@ -82,9 +82,11 @@ def parseChapterList(bS, urlObj, content, evalJs):
         if len(nextTocUrls) == 1:
             nextUrl = nextTocUrls[0]
             allNextUrls = []
+            webViewSession = urlObj.get('webViewSession')
             while nextTocUrls and nextUrl not in allNextUrls:
                 allNextUrls.append(nextUrl)
                 urlObj = parseUrl(nextUrl, evalJs, urlObj['url'])
+                urlObj['webViewSession'] = webViewSession
                 content, __ = getContent(urlObj)
                 nextTocUrls = parseCL(content)
                 if nextTocUrls:

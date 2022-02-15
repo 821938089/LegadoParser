@@ -19,7 +19,8 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
         'bodytype': None,
         'webView': False,
         'webJs': '',
-        'allFontFaceUrl': None
+        'allFontFaceUrl': None,
+        'webViewSession': None
     }
     bodyType = None
     ruleObj = getUrlRuleObj(ruleUrl)
@@ -121,13 +122,16 @@ def getContent(urlObj):
     userAgent = urlObj['headers']['User-Agent']
     respone = None
 
-    if urlObj['webView'] and urlObj['method'] == 'GET':
-        webView = WebView(userAgent)
-        content = webView.getResponseByUrl(url, urlObj['webJs'])
-        urlObj['allFontFaceUrl'] = webView.allFontFaceUrl
-    elif urlObj['webView'] and urlObj['method'] == 'POST' and bodyType == Body.FORM:
-        webView = WebView(userAgent)
-        content = webView.getResponseByPost(url, body, charset, urlObj['webJs'])
+    if urlObj['webView'] and (bodyType is None or bodyType == Body.FORM):
+        if not urlObj.get('webViewSession'):
+            webView = WebView(userAgent)
+            urlObj['webViewSession'] = webView
+        else:
+            webView = urlObj['webViewSession']
+        if urlObj['method'] == 'GET':
+            content = webView.getResponseByUrl(url, urlObj['webJs'])
+        elif urlObj['method'] == 'POST':
+            content = webView.getResponseByPost(url, body, charset, urlObj['webJs'])
         urlObj['allFontFaceUrl'] = webView.allFontFaceUrl
     else:
         if body and bodyType == Body.FORM:

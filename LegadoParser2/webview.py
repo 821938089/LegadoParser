@@ -74,6 +74,9 @@ class WebView(object):
             return self.driver.page_source
 
 
+_executable_path = None
+
+
 def createDriverInstance(userAgent=USER_AGENT):
     options = webdriver.ChromeOptions()
     # user_data_dir = os.path.join(os.path.abspath("."), 'webview\AutomationProfile')
@@ -100,7 +103,10 @@ def createDriverInstance(userAgent=USER_AGENT):
     # https://zhuanlan.zhihu.com/p/328768200
     options.add_argument("disable-blink-features=AutomationControlled")
     options.add_argument(f"user-agent={userAgent}")
-    service = Service(executable_path=ChromeDriverManager(log_level=logging.NOTSET).install())
+    global _executable_path
+    if not _executable_path:
+        _executable_path = ChromeDriverManager(log_level=logging.NOTSET)
+    service = Service(executable_path=_executable_path.install())
     driver = webdriver.Chrome(service=service, options=options)
     return driver
 

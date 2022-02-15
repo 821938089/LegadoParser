@@ -15,6 +15,7 @@ from LegadoParser2.StrOperate import getRightStr
 # 查看 unicode 区段 https://www.fileformat.info/info/unicode/block/index.htm
 # https://www.cnblogs.com/geeksongs/p/14351576.html
 # https://blog.harumonia.moe/font-antispider-cracker/
+# https://seealso.cn/post/use-fonttools-build-webfont-to-anti-crawler/
 
 
 def checkPUA(text):
@@ -148,6 +149,7 @@ def fixPUAStr(text, allFontFaceUrl, PUAChars):
                 # 转换 woff woff2 到 ttf
                 # https://github.com/fonttools/fonttools/issues/1694
                 font.flavor = None
+                mem_font_file.truncate(0)
                 mem_font_file.seek(0)
                 font.save(mem_font_file)
 

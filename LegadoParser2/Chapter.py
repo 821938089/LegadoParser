@@ -80,9 +80,11 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
             allNextUrls = []
             if nextChapterUrl:
                 allNextUrls.append(nextChapterUrl)
+            webViewSession = urlObj.get('webViewSession')
             while nextContentUrls and nextUrl not in allNextUrls:
                 allNextUrls.append(nextUrl)
                 urlObj = parseUrl(nextUrl, evalJs)
+                urlObj['webViewSession'] = webViewSession
                 content, __ = getContent(urlObj)
                 nextContentUrls = parseCt(content)
                 if nextContentUrls:
