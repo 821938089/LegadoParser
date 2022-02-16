@@ -101,35 +101,30 @@ def preProcessRule(packedRules):
                                   'body': {'regex': '', 'reObj': None, 'replacement': '', 'replaceFirst': False}}
             regexRule = rule['subRules'][0]
             length = len(regexRule)
-            if length == 2 and regexRule[0] == ':':
-                rule['preProcess']['regexType'] = 'allInOne'
+
+            # ## regex 形式
+            if length > 1:
                 rule['preProcess']['body']['regex'] = regexRule[1]
-            elif length == 2 and regexRule[0] == '##':
-                rule['preProcess']['regexType'] = 'replace'
-                rule['preProcess']['body']['regex'] = regexRule[1]
-            elif length == 2 and regexRule[0] == '####':
-                rule['preProcess']['regexType'] = 'replace'
-                rule['preProcess']['body']['regex'] = regexRule[1]
-            elif length == 3 and regexRule[-1] == '####':
-                rule['preProcess']['regexType'] = 'replace'
-                rule['preProcess']['body']['regex'] = regexRule[1]
-                rule['preProcess']['body']['replaceFirst'] = True
-            elif length == 3 and regexRule[-1] == '##':
-                rule['preProcess']['regexType'] = 'replace'
-                rule['preProcess']['body']['regex'] = regexRule[1]
-            elif length == 4:
-                rule['preProcess']['regexType'] = 'replace'
-                rule['preProcess']['body']['regex'] = regexRule[1]
+
+            # ## regex ## replacement 形式
+            if length > 3:
                 rule['preProcess']['body']['replacement'] = regexRule[3]
-            elif length == 5 and regexRule[-1] == '##':
-                rule['preProcess']['regexType'] = 'replace'
-                rule['preProcess']['body']['regex'] = regexRule[1]
-                rule['preProcess']['body']['replacement'] = regexRule[3]
-                rule['preProcess']['body']['replaceFirst'] = True
-            elif length == 5 and regexRule[-1] == '###':
+
+            # 先假定为replace模式
+            rule['preProcess']['regexType'] = 'replace'
+
+            if length == 5 and regexRule[-1] == '###':
                 rule['preProcess']['regexType'] = 'onlyOne'
-                rule['preProcess']['body']['regex'] = regexRule[1]
-                rule['preProcess']['body']['replacement'] = regexRule[3]
+
+            elif length == 2 and regexRule[0] == ':':
+                rule['preProcess']['regexType'] = 'allInOne'
+
+            elif length == 5 and regexRule[-1] == '##':
+                rule['preProcess']['body']['replaceFirst'] = True
+
+            elif length == 3 and regexRule[-1] == '####':
+                rule['preProcess']['body']['replaceFirst'] = True
+
             if rule['preProcess']['body']['regex']:
                 try:
                     rule['preProcess']['body']['reObj'] = re.compile(
@@ -138,6 +133,7 @@ def preProcessRule(packedRules):
                     if DEBUG_MODE:
                         print('preProcessRule 正则表达式编译失败')
                     pass
+
             if rule['preProcess']['body']['replacement'] and rule['preProcess']['regexType'] == 'replace':
                 rule['preProcess']['body']['replacement'] = captureGroupRegex.sub(
                     lambda x: '\\' + x[0][1], rule['preProcess']['body']['replacement'])

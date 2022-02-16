@@ -92,7 +92,7 @@ def writeFontPng(char, font, fontSize, mem_fs):
         # image.save(f'{codePoint}.png', format='png')
 
 
-def ocrFontPng(PUAChars, fontFile, mem_fs):
+def ocrFont(PUAChars, fontFile, mem_fs):
     # 调用OCR识别图片中的文字
     # 返回字符转换字典
     # 备选OCR识别库 paddleocr
@@ -158,7 +158,7 @@ def fixPUAStr(text, allFontFaceUrl, PUAChars):
                 if DEBUG_MODE:
                     print('fixPUAStr 字体文件中未找到可以替换的字')
                 return text
-            charDict = ocrFontPng(PUAChars, mem_font_file, mem_fs)
+            charDict = ocrFont(PUAChars, mem_font_file, mem_fs)
             for old, new in charDict.items():
                 text = text.replace(old, new)
             return text

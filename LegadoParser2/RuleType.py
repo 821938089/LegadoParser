@@ -28,33 +28,21 @@ def getRuleType(rules, index, hasEndRule=False, contentIsJson=False):
     ruleJoinSet = {'&&', '||', '%%', '##'}  # ‘##’不是连接符号，不想把判断结束规则条件写的太复杂了，就放一起了
     if rules[index] in ruleSeperatorSet:
         return RuleType.RuleSymbol
-    elif index > 0 and rules[index - 1] == '##':
-        return RuleType.Regex
-    elif index > 0 and rules[index - 1] == ':':
+    elif index > 0 and rules[index - 1] in {'##', ':'}:
         return RuleType.Regex
     elif len(rules[index]) == 2 and rules[index][0] == '$' and rules[index][1].isnumeric():
         return RuleType.Regex
-    elif index > 0 and rules[index - 1] == '@css:':
+    elif index > 0 and rules[index - 1] in {'@css:', '@@'}:
         return RuleType.DefaultOrEnd
-    elif index > 0 and rules[0] == '@@':
-        return RuleType.DefaultOrEnd
-    elif index > 0 and rules[index - 1] == '@js:':
-        # raise RuleNotSupportError('不支持 @js: 语法')
-        return RuleType.Js
-    elif index > 0 and rules[index - 1] == '<js>':
-        # raise RuleNotSupportError('不支持 <js></js> 语法')
+    elif index > 0 and rules[index - 1] in {'@js:', '<js>'}:
         return RuleType.Js
     elif index > 0 and rules[index - 1] == '@get:{':
-        # raise RuleNotSupportError('不支持 <js></js> 语法')
         return RuleType.Get
     elif index > 0 and rules[index - 1] == '@put:{':
-        # raise RuleNotSupportError('不支持 <js></js> 语法')
         return RuleType.Put
     elif index > 0 and rules[index - 1] == '{{':
-        # raise RuleNotSupportError('不支持 <js></js> 语法')
         return RuleType.Inner
     elif index > 0 and rules[index - 1] == '{':
-        # raise RuleNotSupportError('不支持 <js></js> 语法')
         return RuleType.JsonInner
     elif rules[index].startswith('/') and not ('{{' in rules or '@get:{' in rules):
         return RuleType.Xpath
@@ -78,10 +66,12 @@ def getRuleType2(rules, index):
     ruleRegexSeperatorSet = {'##', '###', ':', '####'}
     ruleOrderSeperatorSet = {'+', '-'}
     ruleInnerSeperatorSet = {'{{', '}}'}
-    ruleJsonInnerSeperatorSet = {'{'}  # 右花括号可能是put规则的，不能放这里比较
+    ruleJsonInnerSeperatorSet = {'{'}  # 右花括号(})可能是put规则的，不能放这里比较
+    ruleFormatSeperatorSet = {'{{', '}}', '{', '}', '@get:{'}
     # ruleEndSet = {'text', 'textNodes', 'ownText', 'html', 'all'}
     ruleJoinSet = {'&&', '||', '%%'}
     length = len(rules)
+    # ------------自身预测-------------
     if rules[index] in ruleDefaultSeperatorSet:
         return RuleType.DefaultOrEnd
     elif rules[index] in ruleJsSeperatorSet:
@@ -102,55 +92,38 @@ def getRuleType2(rules, index):
         return RuleType.Format
     elif rules[index] == '@put:{':
         return RuleType.Put
-    elif index > 0 and rules[index - 1] == '##':
-        return RuleType.Regex
-    elif index > 0 and rules[index - 1] == '####':
-        return RuleType.Regex
-    elif index > 0 and rules[index - 1] == ':':
-        return RuleType.Regex
     elif len(rules[index]) == 2 and rules[index][0] == '$' and rules[index][1].isnumeric():
         return RuleType.Format
-    elif index > 0 and rules[index - 1] == '@css:':
+    # ------------自身预测-------------
+    # ------------前向预测-------------
+    elif index > 0 and rules[index - 1] in ruleDefaultSeperatorSet:
         return RuleType.DefaultOrEnd
-    elif index > 0 and rules[index - 1] == '@js:':
+    elif index > 0 and rules[index - 1] in {'##', '####', ':'}:
+        return RuleType.Regex
+    elif index > 0 and rules[index - 1] in {'<js>', '@js:'}:
         return RuleType.Js
-    elif index > 0 and rules[index - 1] == '<js>':
-        return RuleType.Js
-    elif index > 0 and rules[index - 1] == '@get:{':
-        return RuleType.Format
     elif index > 0 and rules[index - 1] == '@put:{':
         return RuleType.Put
-    elif index > 0 and rules[index - 1] == '{{':
-        return RuleType.Format
-    elif index > 0 and rules[index - 1] == '{':
+    elif index > 0 and rules[index - 1] in ruleFormatSeperatorSet:
         return RuleType.Format
     elif index > 0 and len(rules[index - 1]) == 2 and rules[index - 1][0] == '$' and rules[index - 1][1].isnumeric():
         return RuleType.Format
-    elif rules[index] == '}' and rules[index - 2] == '@get:{':
-        return RuleType.Format
-    elif rules[index] == '}' and rules[index - 2] == '{':
+    elif rules[index] == '}' and rules[index - 2] in {'@get:{', '{'}:
         return RuleType.Format
     elif rules[index] == '}' and rules[index - 2] == '@put:{':
         return RuleType.Put
-    elif rules[index].startswith('$.') or rules[index].startswith('$['):
-        return RuleType.Json
-    elif index > 0 and rules[index - 1] in ruleDefaultSeperatorSet:
-        return RuleType.DefaultOrEnd
-    elif index == 0 and length == 0:
-        return RuleType.DefaultOrEnd
-    elif index + 1 < length and rules[index + 1] == '{{':
-        return RuleType.Format
-    elif index + 1 < length and rules[index + 1] == '@get:{':
-        return RuleType.Format
-    elif index + 1 < length and rules[index + 1] == '{':
+    # ------------前向预测-------------
+    # ------------后向预测-------------
+    elif index + 1 < length and rules[index + 1] in {'{{', '{', '@get:{'}:
         return RuleType.Format
     elif index + 1 < length and len(rules[index + 1]) == 2 and rules[index + 1][0] == '$' and rules[index + 1][1].isnumeric():
         return RuleType.Format
-    elif index > 0 and rules[index - 1] == '}}':
-        return RuleType.Format
-    elif index > 0 and rules[index - 1] == '}':
-        return RuleType.Format
+    # ------------后向预测-------------
+    elif rules[index].startswith('$.') or rules[index].startswith('$['):
+        return RuleType.Json
     elif rules[index].startswith('/'):
         return RuleType.Xpath
+    elif index == 0 and length == 1:
+        return RuleType.DefaultOrEnd
     else:
         return RuleType.DefaultOrEnd
