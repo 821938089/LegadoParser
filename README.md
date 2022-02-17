@@ -1,6 +1,6 @@
 # LegadoParser
 
-阅读3.0书源规则解析库
+[阅读3.0](https://github.com/gedoor/legado)书源规则解析库
 
 支持大多数 `Default` `Jsonpath` `Xpath` `Regex` 规则
 
@@ -36,7 +36,7 @@ pip install -r requirements_linux.txt
 ### OCR可选安装
 
 ~~~bash
-pip install -r requiremens_ocr.txt
+pip install -r requirements_ocr.txt
 ~~~
 
 安装后使用webView获取章节内容会自动检测是否需要OCR
