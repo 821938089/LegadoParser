@@ -93,18 +93,19 @@ def parseSearchUrl(bS, key, page, evalJs):
 #         return content, redirected
 
 
-def getSearchResult(bS, searchObj, content, evalJS, **kwargs):
+def getSearchResult(bS, urlObj, content, evalJS, **kwargs):
     ruleSearch = bS['ruleSearch']
     if not ruleSearch:
         return []
-    redirected = searchObj['redirected']
+    redirected = urlObj['redirected']
+    useWebView = urlObj['webView']
     elements = getElements(content, getRuleObj(ruleSearch['bookList']), evalJS)
 
-    if not elements and redirected:
-        return [parseBookInfo(bS, searchObj, content, evalJS)]
+    if not elements and (redirected or useWebView):
+        return [parseBookInfo(bS, urlObj, content, evalJS)]
 
     searchResult = []
-    finalUrl = searchObj['finalurl']  # 最终访问的url，可能是跳转后的Url
+    finalUrl = urlObj['finalurl']  # 最终访问的url，可能是跳转后的Url
     # finalUrl = urlparse(finalUrl)._replace(query='').geturl()  # 去除query
 
     rulesName = getRuleObj(ruleSearch['name'])

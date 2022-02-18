@@ -38,6 +38,8 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
 
         urlObj.update(GSON.parse(options))
 
+        urlObj['method'] = urlObj['method'].upper()
+
         if isinstance(urlObj['headers'], str):
             urlObj['headers'] = GSON.parse(urlObj['headers'])
 
@@ -143,8 +145,8 @@ def getContent(urlObj):
 
     if respone:
         urlObj['finalurl'] = str(respone.url)
-    else:
-        urlObj['finalurl'] = url
+    elif urlObj['webView']:
+        urlObj['finalurl'] = webView.currentUrl
 
     if urlObj['allFontFaceUrl']:
         for fontFaceUrl in urlObj['allFontFaceUrl']:

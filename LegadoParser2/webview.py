@@ -21,6 +21,7 @@ class WebView(object):
     def __init__(self, userAgent=USER_AGENT):
         self.driver = createDriverInstance(userAgent)
         self.allFontFaceUrl = None
+
         if DEBUG_MODE:
             global _driver
             try:
@@ -29,11 +30,9 @@ class WebView(object):
                 pass
             _driver = self.driver
 
-    def __del__(self):
-        if not DEBUG_MODE:
-            self.driver.quit()
-
-        # self.driver.quit()
+    @property
+    def currentUrl(self):
+        return self.driver.current_url
 
     def getResponseByUrl(self, url, javaScript=''):
         # 定义 navigator.platform 为空
