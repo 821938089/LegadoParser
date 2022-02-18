@@ -61,7 +61,7 @@
   * 标准规范与实现库 [Package org.jsoup.select](https://jsoup.org/apidocs/org/jsoup/select/Selector.html)
   * 在线测试 [Try jsoup online](https://try.jsoup.org/)
   * 【实现细节差异】
-    * 不支持伪类选择器`:eq()`。
+    * 不支持伪类选择器 `:eq()`。
 * 注意：获取内容可用text,textNodes,ownText,html,all,href,src等
 * 例子见最后的【书源一】的搜索页和正文页规则
 * JSONPath
@@ -73,7 +73,7 @@
   * 在线测试 [Jayway JsonPath Evaluator](http://jsonpath.herokuapp.com/)
   * 【实现细节差异】
 
-    * `$.chapter.*`中的`.*`语法可能会取不到内容，属于`jsonpath_ng`解析库的问题。
+    * `$.chapter.*`中的 `.*`语法可能会取不到内容，属于 `jsonpath_ng`解析库的问题。
   * 例子见最后的【书源三】的搜索页、目录页和正文页规则
   * XPath
 
@@ -87,7 +87,7 @@
     * 可以在 `<js></js>`、`@js:`中使用，结果存在result中
     * `@js:`只能放在其他规则的最后使用
     * `<js></js>`可以在任意位置使用，还能作为其他规则的分隔符，例：`tag.li<js></js>//a`
-    * 在搜索列表、发现列表和目录中使用可以用`+`开头，使用AllInOne规则
+    * 在搜索列表、发现列表和目录中使用可以用 `+`开头，使用AllInOne规则
   * 正则之AllInOne
 
     * 只能在搜索列表、发现列表、详情页预加载和目录列表中使用
@@ -95,7 +95,7 @@
     * 教程 [veedrin/horseshoe 2018-10 | Regex专题](https://github.com/veedrin/horseshoe#2018-10--regex%E4%B8%93%E9%A2%98)
 
       [语法](https://github.com/veedrin/horseshoe/blob/master/regex/%E8%AF%AD%E6%B3%95.md) [方法](https://github.com/veedrin/horseshoe/blob/master/regex/%E6%96%B9%E6%B3%95.md) [引擎](https://github.com/veedrin/horseshoe/blob/master/regex/%E5%BC%95%E6%93%8E.md)
-    * 例子见最后的【书源一】的目录页规则，最前面的`-`表示目录倒序，以及【书源二】的目录页规则
+    * 例子见最后的【书源一】的目录页规则，最前面的 `-`表示目录倒序，以及【书源二】的目录页规则
   * 正则之OnlyOne
 
     * 形式 `##正则表达式##替换内容###`
@@ -105,7 +105,7 @@
   * 正则之净化
 
     * 形式 `##正则表达式##替换内容`
-    * 只能跟在其他规则后面，独立使用相当于`all##正则表达式##替换内容`
+    * 只能跟在其他规则后面，独立使用相当于 `all##正则表达式##替换内容`
     * 例子见最后的【书源一】的正文页规则
   * 注意点：该规则为循环匹配替换
   * 自定义三种连接符号
@@ -122,7 +122,7 @@
   * 【实现细节差异】
 
     * JavaScript
-      * 避免使用`const`、`let`进行变量声明，请使用`var`，或使用匿名函数进行包装，已有规则会使用正则进行替换。
+      * 避免使用 `const`、`let`进行变量声明，请使用 `var`，或使用匿名函数进行包装，已有规则会使用正则进行替换。
       * 对于result是dict类型时，传入到js执行时会转换为js对象，因此调用JSON.parse(result)会报错，兼容解决方法是使用异常捕捉语句，例如：`try{result=JSON.parse(result)}catch(e){}`。
 
 ### 2、Legado的特殊规则
@@ -157,7 +157,7 @@
        </js>
        ```
 
-       ※其中，`ua`必须保证是`JavaScript`的`String`类型，`JSON.stringify()`才能将`header`转换为字符串。
+       ※其中，`ua`必须保证是 `JavaScript`的 `String`类型，`JSON.stringify()`才能将 `header`转换为字符串。
      * ~获取登录后的cookie~（不支持）
 
        ```
@@ -237,30 +237,30 @@
        </js>
        ```
 
-       ※其中，`body`必须保证是`JavaScript`的`String`类型，变量是计算得到的尽量都用`String()`强转一下类型。
+       ※其中，`body`必须保证是 `JavaScript`的 `String`类型，变量是计算得到的尽量都用 `String()`强转一下类型。
      * 变量的put与get
 
-       * `@put`与`@get`
+       * `@put`与 `@get`
 
          只能用于js以外的规则中，@put里使用JSONPath不需要加引号，其他规则需要加引号，
 
          例：@put:{bid:"//\*\[@bid-data\]/@bid-data"}
-       * `java.put`与`java.get`
+       * `java.put`与 `java.get`
 
          只能用于js中，在js中无法使用@get
        * 【实现细节差异】
 
-         * 变量无法跨函数存取，例如`ruleSearch`中的变量无法在`ruleBookInfo`中使用。
-     * `{{}}`与`{}`规则
+         * 变量无法跨函数存取，例如 `ruleSearch`中的变量无法在 `ruleBookInfo`中使用。
+     * `{{}}`与 `{}`规则
 
-       * 在搜索URL与发现URL中的`{{}}`
+       * 在搜索URL与发现URL中的 `{{}}`
 
          在{{}}里只能使用js
-       * 在搜索URL与发现URL以外的`{{}}`
+       * 在搜索URL与发现URL以外的 `{{}}`
 
-         可在`{{}}`中使用任意规则 （正则除外？），默认为js，使用其他规则需要有明显的标志头，
+         可在 `{{}}`中使用任意规则 （正则除外？），默认为js，使用其他规则需要有明显的标志头，
 
-         如：Default规则需要以`@@`开头，XPath需要以`@xpath:`或`//`开头，JSONPath需要以`@json:`或`$.`开头，CSS需要以`@css:`开头
+         如：Default规则需要以 `@@`开头，XPath需要以 `@xpath:`或 `//`开头，JSONPath需要以 `@json:`或 `$.`开头，CSS需要以 `@css:`开头
        * 【实现细节差异】
 
          * `{{}}`只能在顶级和js规则中使用，其他地方不支持。
@@ -272,7 +272,7 @@
        * ~在js中调用java的常规方法：由于java这个关键字已经被使用，调用java开头的包名时需使用全局变量Packages [参考脚本之家](https://www.jb51.net/article/92138.htm)~
 
          * ~只调用某个public函数：，例：`io.legado.app.utils.htmlFormat(str)`、`org.jsoup.Jsoup.parse(str)`~
-         * ~直接引入java类，如下所示，引入了两个java包，java包的作用域是在`with`的范围内，其内使用java相关语法，最后在作用域外被js调用了作用域内的函数~
+         * ~直接引入java类，如下所示，引入了两个java包，java包的作用域是在 `with`的范围内，其内使用java相关语法，最后在作用域外被js调用了作用域内的函数~
 
          ```
          var javaImport = new JavaImporter();
@@ -481,10 +481,10 @@
 
 * 搜索地址(url)
 
-  * `key`为关键字标识，通常形态为`{{key}}`，运行时会替换为搜索关键字
+  * `key`为关键字标识，通常形态为 `{{key}}`，运行时会替换为搜索关键字
 
     也可以对key进行加密等操作，如：`{{java.base64Encode(key)}}`
-  * `page`为关键字标识，通常形态为`{{page}}`，page的初值为1也可以对page进行计算，
+  * `page`为关键字标识，通常形态为 `{{page}}`，page的初值为1也可以对page进行计算，
 
     如：`{{(page-1)*20}}`，有时会遇到第一页没有页数的情况，有两种方法：
 
@@ -506,14 +506,14 @@
 
 * ~发现地址规则(url)~
 
-  * `page`为关键字标识，通常形态为`{{page}}`，page的初值为1，也可以对page进行计算，
+  * `page`为关键字标识，通常形态为 `{{page}}`，page的初值为1，也可以对page进行计算，
 
     如：`{{(page-1)*20}}`，有时会遇到第一页没有页数的情况，有两种方法：
 
     ① `{{page - 1 == 0 ? "": page}}`
 
     ② `<,{{page}}>`
-  * 格式一，如： `名称::http://www。baidu.com`，发现URL可使用`&&`或换行符`\n`隔开
+  * 格式一，如： `名称::http://www。baidu.com`，发现URL可使用 `&&`或换行符 `\n`隔开
   * 格式二，有5个样式属性(layout\_flexGrow、layout\_flexShrink、layout\_alignSelf、layout\_flexBasisPercent、layout\_wrapBefore)需要了解，详情见[简书](https://www.jianshu.com/p/3c471953e36d)，写法如：
 
     ```
@@ -558,7 +558,7 @@
 * 预处理规则(bookInfoInit)
 
   * 只能使用正则之AllInOne或者js
-  * 正则之AllInOne必须以`:`开头
+  * 正则之AllInOne必须以 `:`开头
   * ~js的返回值需要是json对象，例：~
 
     ```
@@ -578,7 +578,7 @@
     </js>
     ```
 
-    ~此时，书名规则填`a`，作者规则填`b`，分类规则填`c`，字数规则填`d`，最新章节规则填`e`，简介规则`f`，封面规则填`g`，目录URL规则填`h`~
+    ~此时，书名规则填 `a`，作者规则填 `b`，分类规则填 `c`，字数规则填 `d`，最新章节规则填 `e`，简介规则 `f`，封面规则填 `g`，目录URL规则填 `h`~
 * 书名规则(name)
 * 作者规则(author)
 * 分类规则(kind)
@@ -603,7 +603,7 @@
 * 章节URL规则(chapterUrl)
 * VIP标识(isVip)
 
-  * 当结果为`null` `false` `0` `""`时为非VIP
+  * 当结果为 `null` `false` `0` `""`时为非VIP
 * 章节信息(ChapterInfo)
 
   * 可调用java.timeFormat(timestamp: Long)将时间戳转为yyyy/MM/dd HH:mm格式的时间
@@ -627,7 +627,7 @@
     ```
   * ~book对象的可用属性~（不支持）
 
-    * 使用方法: 在js中或`{{}}`中使用`book.属性`的方式即可获取，如在正文内容后加上`##{{book.name+"正文卷"+title}}` 可以净化 书名+正文卷+章节名称（如：我是大明星正文卷第二章我爸是豪门总裁） 这一类的字符
+    * 使用方法: 在js中或 `{{}}`中使用 `book.属性`的方式即可获取，如在正文内容后加上 `##{{book.name+"正文卷"+title}}` 可以净化 书名+正文卷+章节名称（如：我是大明星正文卷第二章我爸是豪门总裁） 这一类的字符
 
     ```
     bookUrl // 详情页Url(本地书源存储完整文件路径)
@@ -661,7 +661,7 @@
     ```
   * ~chapter对象的可用属性~（不支持）
 
-    * 使用方法: 在js中或`{{}}`中使用`chapter.属性`的方式即可获取，如在正文内容后加上`##{{chapter.title+chapter.index}}`可以净化 章节标题+序号(如 第二章 天仙下凡2) 这一类的字符
+    * 使用方法: 在js中或 `{{}}`中使用 `chapter.属性`的方式即可获取，如在正文内容后加上 `##{{chapter.title+chapter.index}}`可以净化 章节标题+序号(如 第二章 天仙下凡2) 这一类的字符
 
     ```
     url // 章节地址
@@ -722,9 +722,9 @@
 * WebViewJs(webJs)
 
   * 用于模拟鼠标点击等操作，必须有返回值（不为空，表示webjs执行成功，否则会无限循环），返回值会用于资源正则或正文中
-  * 举个栗子，在webJs中执行了`getDecode()`，使正文部分解密：
+  * 举个栗子，在webJs中执行了 `getDecode()`，使正文部分解密：
   * 【实现细节差异】
-    * Js代码*必须*使用函数进行包装，兼容写法`(()=>{要执行的js代码 return 要返回的内容;})()`
+    * Js代码*必须*使用函数进行包装，兼容写法 `(()=>{要执行的js代码 return 要返回的内容;})()`
 
   ```
     {
@@ -792,10 +792,10 @@
   * 用于嗅探
   * 一般情况下的无脑教程如下
 
-    * 章节链接后面加 `,{"webView":true}`，不要洒敷敷的写成 `tag.a@href,{"webView":true}`或`$.link,{"webView":true}`，正确写法如:`tag.a@href##$##{"webView":true}`,`{{@@tag.a@href}},{"webView":true}`,`tag.a@href@js:result+',{"webView":true}'`等
+    * 章节链接后面加 `,{"webView":true}`，不要洒敷敷的写成 `tag.a@href,{"webView":true}`或 `$.link,{"webView":true}`，正确写法如:`tag.a@href##$##{"webView":true}`,`{{@@tag.a@href}},{"webView":true}`,`tag.a@href@js:result+',{"webView":true}'`等
     * 在有嗅探功能的浏览器（如：via、x浏览器等）中，输入章节链接。注意 `千万别带,{"webView":true}`
     * 媒体开始播放后使用浏览器的嗅探功能，查看资源的链接
-    * 在资源正则里填写资源链接的正则，一般写`.*\.(mp3|mp4).*`这个就可以了
+    * 在资源正则里填写资源链接的正则，一般写 `.*\.(mp3|mp4).*`这个就可以了
     * 最后在正文填写 `<js>result</js>`
   * 如下示例，在正文嗅探mp3和mp4的资源：
 
@@ -877,8 +877,8 @@
   * 调试正文页
 
     输入正文页URL，如：`--https://www.zhaishuyuan.com/chapter/30394/20940996`
-* 无脑`{"webView":true}`很方便
-* 特别注意用`JSON.stringify()`方法时，需要保证JSON对象的value都是`JavaScript`的`String`类型(在阅读3.0中)
+* 无脑 `{"webView":true}`很方便
+* 特别注意用 `JSON.stringify()`方法时，需要保证JSON对象的value都是 `JavaScript`的 `String`类型(在阅读3.0中)
 * 附：
 
   * 书源一
