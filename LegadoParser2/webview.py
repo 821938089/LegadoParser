@@ -49,9 +49,14 @@ class WebView(object):
         time.sleep(0.7)
         if javaScript:
             result = ''
-            while not result:
+            for _ in range(30):
                 result = self.driver.execute_script('return ' + javaScript)
-                time.sleep(0.3)
+                time.sleep(1)
+                if result:
+                    break
+            else:
+                if DEBUG_MODE:
+                    print('WebView.getResponseByPost js 执行超时')
             return result
         else:
             if getAllFontFaceUrl:
@@ -62,6 +67,10 @@ class WebView(object):
         self.driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
                                     'source': "Object.defineProperty(navigator,'platform',{value:''})"})
         # https://stackoverflow.com/questions/22538457/put-a-string-with-html-javascript-into-selenium-webdriver
+        # 注意不能直接设置html，因为baseUrl不正确，相对地址的js资源无法加载
+        # 有需要可以手动（用正则）对html里的相对地址改成绝对地址（不建议）
+        # 好像可以用iframe手动设置url和html，不知道可不可行
+        # https://stackoverflow.com/questions/7534622/select-iframe-using-python-selenium
         html = createPostFormHtml(url, formData, charset)
         html_bs64 = base64.b64encode(html.encode(charset)).decode()
         self.driver.get("data:text/html;base64," + html_bs64)
@@ -73,9 +82,14 @@ class WebView(object):
 
         if javaScript:
             result = ''
-            while not result:
+            for _ in range(30):
                 result = self.driver.execute_script('return ' + javaScript)
-                time.sleep(0.3)
+                time.sleep(1)
+                if result:
+                    break
+            else:
+                if DEBUG_MODE:
+                    print('WebView.getResponseByPost js 执行超时')
             return result
         else:
             return self.driver.page_source
