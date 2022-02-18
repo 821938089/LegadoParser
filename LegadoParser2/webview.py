@@ -51,9 +51,9 @@ class WebView(object):
             result = ''
             for _ in range(30):
                 result = self.driver.execute_script('return ' + javaScript)
-                time.sleep(1)
                 if result:
                     break
+                time.sleep(1)
             else:
                 if DEBUG_MODE:
                     print('WebView.getResponseByPost js 执行超时')
@@ -84,9 +84,9 @@ class WebView(object):
             result = ''
             for _ in range(30):
                 result = self.driver.execute_script('return ' + javaScript)
-                time.sleep(1)
                 if result:
                     break
+                time.sleep(1)
             else:
                 if DEBUG_MODE:
                     print('WebView.getResponseByPost js 执行超时')
