@@ -27,14 +27,14 @@ def req(url, cellphone_mode=False, cookies='', header={}, method=0, post_data_ty
         proxies = proxy
 
     if requests == None:
-        requests = httpx.Client(http2=True, proxies=proxies)
+        requests = httpx.Client(http2=True, proxies=proxies, verify=False)
         # requests.event_hooks['request'] = [log_request]
     elif currentProxies and currentProxies != proxy:
         requests.close()
         del requests
         # proxies = {}
         # proxies[proxy_type] = proxy
-        requests = httpx.Client(http2=True, proxies=proxies)
+        requests = httpx.Client(http2=True, proxies=proxies, verify=False)
     currentProxies = proxy
     if 'User-Agent' in header and header['User-Agent'] != '':
         pass
@@ -70,6 +70,7 @@ def req(url, cellphone_mode=False, cookies='', header={}, method=0, post_data_ty
         else:
             with requests.stream('GET', url, headers=tmp_header,
                                  timeout=timeout, follow_redirects=allow_redirects) as r:
+                r.raise_for_status()
                 if not file_obj:
                     with open(file_name, "wb") as file:
                         for chunk in r.iter_bytes(chunk_size=1024):

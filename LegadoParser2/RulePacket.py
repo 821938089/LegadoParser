@@ -161,7 +161,14 @@ def preProcessRule(packedRules):
             for i in rule['preProcess']['innerRules']:
                 compiledRule = []
                 for y in i:
-                    compiledRule.append(getRuleObj([y[0]]))
+                    compiledRuleObj = getRuleObj([y[0]])
+                    r = compiledRuleObj[0]
+                    if r['type'] == RuleType.DefaultOrEnd and r['rules'][0] not in {'@', '@@'}:
+                        r['type'] = RuleType.Js  # Inner默认规则为Js
+                        r['preProcess']['js'] = [r['rules']]
+                        r['preProcess']['innerRules'] = []
+                        r['preProcess']['compiledRules'] = []
+                    compiledRule.append(compiledRuleObj)
                 rule['preProcess']['compiledRules'].append(compiledRule)
         elif rule['type'] == RuleType.Format:
             rule['preProcess'] = {'subRules': []}

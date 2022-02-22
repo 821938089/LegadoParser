@@ -359,8 +359,19 @@ def tokenizerUrl(text: str) -> list:
         elif char == '<':
             if (result := ck(cursor, tmpStr[:-1], '<js>', '<js>'))[2]:
                 cursor, tmpStr, __ = result
-            elif (result := ck(cursor, tmpStr[:-1], '</js>', stackIndex=-1, stackText='<js>'))[2]:
-                cursor, tmpStr, __ = result
+                while cursor < length:
+                    char = text[cursor]
+                    tmpStr += char
+                    if char == '<':
+                        if (result := ck(cursor, tmpStr[:-1], '</js>', stackIndex=-1, stackText='<js>'))[2]:
+                            cursor, tmpStr, __ = result
+                            break
+                        else:
+                            cursor += 1
+                    else:
+                        cursor += 1
+            # elif (result := ck(cursor, tmpStr[:-1], '</js>', stackIndex=-1, stackText='<js>'))[2]:
+            #     cursor, tmpStr, __ = result
             else:
                 cursor += 1
         elif char == '\\':

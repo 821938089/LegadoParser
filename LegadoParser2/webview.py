@@ -124,6 +124,11 @@ def createDriverInstance(userAgent=USER_AGENT):
     # https://zhuanlan.zhihu.com/p/328768200
     options.add_argument("disable-blink-features=AutomationControlled")
     options.add_argument(f"user-agent={userAgent}")
+    # https://stackoverflow.com/questions/55376947/how-do-i-ignore-an-alert-using-selenium-chrome-webdriver-python
+    options.add_argument("--disable-notifications")
+    options.add_argument("--disable-popup-blocking")
+    # https://stackoverflow.com/questions/57700388/how-to-set-unexpectedalertbehaviour-in-selenium-python
+    options.set_capability('unhandledPromptBehavior', 'accept')
     global _executable_path
     if not _executable_path:
         _executable_path = ChromeDriverManager(log_level=logging.NOTSET)

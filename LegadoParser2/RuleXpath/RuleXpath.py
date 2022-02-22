@@ -3,6 +3,7 @@ import sys
 # from lxml.html.html5parser import HTMLParser
 from lxml.etree import HTML
 from LegadoParser2.RuleType import RuleType
+from LegadoParser2.config import DEBUG_MODE
 if sys.platform == 'win32':
     from LegadoParser2.html5_parser import parse
 else:
@@ -29,7 +30,8 @@ def getElementsByXpath(content, rule):
         return _content
 
     if Xpath is None:
-        print(f'getElementsByDefault : Xpath 为 None')
+        if DEBUG_MODE:
+            print(f'getElementsByDefault : Xpath 为 None')
         return []
 
     return Xpath(content)

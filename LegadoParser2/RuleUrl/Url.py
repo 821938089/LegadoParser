@@ -5,7 +5,8 @@ from LegadoParser2 import GSON
 from LegadoParser2.HttpRequset2 import req
 from LegadoParser2.RuleType import RuleType
 from LegadoParser2.RuleUrl.BodyType import Body
-from LegadoParser2.RuleUrl.UrlEval import getUrlRuleObj, getString
+from LegadoParser2.RuleUrl.UrlEval import getUrlRuleObj
+from LegadoParser2.RuleEval import getString
 from LegadoParser2.webview import WebView
 from LegadoParser2.config import DEBUG_MODE, USER_AGENT
 
@@ -26,7 +27,7 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
     ruleObj = getUrlRuleObj(ruleUrl)
 
     if len(ruleObj) == 1 and ruleObj[0]['type'] != RuleType.DefaultOrEnd:
-        _url = getString(ruleUrl, getUrlRuleObj(ruleUrl), evalJs)
+        _url = getString(ruleUrl, ruleObj, evalJs)
     else:
         _url = ruleUrl
 
@@ -119,7 +120,7 @@ def getContent(urlObj):
     body = urlObj['body']
     url = urlparse(urlObj['url'])
     url = url._replace(query=urlencode(
-        parse_qs(url.query, keep_blank_values=True), doseq=True, encoding=charset))
+        parse_qs(url.query, keep_blank_values=True), doseq=True, encoding=charset, errors='ignore'))
     url = urlunparse(url)
     userAgent = urlObj['headers']['User-Agent']
     respone = None
