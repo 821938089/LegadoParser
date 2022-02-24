@@ -14,6 +14,8 @@
 
 Windows下需要Python 3.9版本，其他Python版本的部分依赖安装需要自行编译
 
+调试模式开关在[config.py](https://github.com/821938089/LegadoParser/blob/main/LegadoParser2/config.py)中
+
 ## 安装
 
 ### Windows （Python 3.9）
