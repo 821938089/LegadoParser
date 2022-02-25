@@ -85,7 +85,7 @@ def getString(content, rulesObj, evalJs, **kwargs):
     replaceRegexRuleObj = []  # 在regexProcessor中使用
     result = getStrings(content, rulesObj, evalJs,
                         replaceRegexRuleObj=replaceRegexRuleObj, **kwargs)
-    result = '\n'.join(result).strip()
+    result = '\n'.join(filter(None, result))
     if replaceRegexRuleObj:
         result = regexProcessor(result, replaceRegexRuleObj[0])[0]
     return result
