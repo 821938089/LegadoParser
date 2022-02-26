@@ -41,7 +41,10 @@ class Fmt():
     @classmethod
     def html(cls, text, otherRegex=otherHtmlRegex):
         text = unicodedata.normalize('NFC', text)
-        text = text.replace(u'\ufeff', '')
+        text = text.replace('\ufeff', '')
+        text = text.replace('\u200b', '')
+        text = text.replace('&lt;', '<')
+        text = text.replace('&gt;', '>')
         text = cls.spaceRegex.sub(' ', text)
         text = cls.noPrintRegex.sub('', text)
         text = cls.wrapHtmlRegex.sub('\n', text)

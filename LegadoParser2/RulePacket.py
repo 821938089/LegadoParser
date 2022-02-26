@@ -338,3 +338,5 @@ def trimBookSource(bS):
 # pprint.pprint(getRuleObj("👁️{{@.count@text}}"))
 
 # print(json.dumps(getRuleObj("👁️{{@.count@text}}"), indent=4, cls=RuleObjectEncoder))
+
+# print(packet(tokenizer('.content tr tr.1@text##(.*作者：)(.*)(发布时间：.*)##$2')))

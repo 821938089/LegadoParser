@@ -92,8 +92,6 @@ def getRuleType2(rules, index):
         return RuleType.Format
     elif rules[index] == '@put:{':
         return RuleType.Put
-    elif len(rules[index]) == 2 and rules[index][0] == '$' and rules[index][1].isnumeric():
-        return RuleType.Format
     # ------------自身预测-------------
     # ------------前向预测-------------
     elif index > 0 and rules[index - 1] in ruleDefaultSeperatorSet:
@@ -113,6 +111,9 @@ def getRuleType2(rules, index):
     elif rules[index] == '}' and rules[index - 2] == '@put:{':
         return RuleType.Put
     # ------------前向预测-------------
+    # $1规则可能是Regex和Format，需要优先判断是否是Regex，故需要先前向预测再自身预测
+    elif len(rules[index]) == 2 and rules[index][0] == '$' and rules[index][1].isnumeric():
+        return RuleType.Format
     # ------------后向预测-------------
     elif index + 1 < length and rules[index + 1] in {'{{', '{', '@get:{'}:
         return RuleType.Format
