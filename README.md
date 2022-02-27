@@ -40,7 +40,9 @@ pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser[ocr]
 ### 升级
 
 ```bash
-pip install -U git+https://github.com/821938089/LegadoParser#egg=LegadoParser
+# 就是卸载重装
+pip uninstall LegadoParser -y
+pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser
 ```
 
 ### 卸载
