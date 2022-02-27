@@ -61,7 +61,7 @@ def parseChapterList(bS, urlObj, content, evalJs):
                 if chapter['url']:
                     chapter['url'] = urljoin(urlObj['finalurl'], chapter['url'])
             if not chapter.get('url'):
-                chapter['url'] = urlObj['finalurl']
+                chapter['url'] = urlObj['rawUrl']
             if ruleToc.get('isPay', None):
                 chapter['isPay'] = getString(e, rulesIsPay, evalJs)
                 chapter['isPay'] = validateFlag(chapter['isPay'])

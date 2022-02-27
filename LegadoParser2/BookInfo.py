@@ -90,11 +90,11 @@ def parseBookInfo(bS, urlObj, content, evalJs):
         result = getStrings(
             content, rulesTocUrl, evalJs, rawContent=_content)
         if result:
-            bookInfo['tocUrl'] = urljoin(urlObj['url'], result[0])
+            bookInfo['tocUrl'] = urljoin(urlObj['finalurl'], result[0])
         else:
-            bookInfo['tocUrl'] = urlObj['finalurl']
+            bookInfo['tocUrl'] = urlObj['rawUrl']
     else:
-        bookInfo['tocUrl'] = urlObj['finalurl']
+        bookInfo['tocUrl'] = urlObj['rawUrl']
         # bookInfo['tocHtml'] = _content
 
     return bookInfo

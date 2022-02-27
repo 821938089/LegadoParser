@@ -14,7 +14,10 @@ def getZipStringContent(url, path):
     mem_fs = MemoryFS()
     with mem_fs.open('book.zip', 'wb+') as mem_zip_file:
         try:
-            req(url, header=headers, file_obj=mem_zip_file)
+            if url.startswith('http'):
+                req(url, header=headers, file_obj=mem_zip_file)
+            else:
+                mem_zip_file.write(bytes.fromhex(url))
         except:
             if DEBUG_MODE:
                 print('getZipStringContent 文件下载失败')

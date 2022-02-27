@@ -14,6 +14,7 @@ from LegadoParser2.config import DEBUG_MODE, USER_AGENT
 def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
     urlObj = {
         'url': '',
+        'rawUrl': ruleUrl,
         'method': 'GET',
         'body': '',
         'headers': {},
@@ -21,7 +22,7 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
         'webView': False,
         'webJs': '',
         'allFontFaceUrl': None,
-        'webViewSession': None
+        'webViewSession': None,
     }
     bodyType = None
     ruleObj = getUrlRuleObj(ruleUrl)
@@ -125,7 +126,7 @@ def getContent(urlObj):
     userAgent = urlObj['headers']['User-Agent']
     respone = None
 
-    if urlObj['webView'] and (bodyType is None or bodyType == Body.FORM):
+    if urlObj['webView'] and (bodyType is None or bodyType == Body.FORM) and 'type' not in urlObj:
         if not urlObj.get('webViewSession'):
             webView = WebView(userAgent)
             urlObj['webViewSession'] = webView
@@ -143,6 +144,9 @@ def getContent(urlObj):
             body = body.encode(charset)
         content, __, respone = req(url, header=urlObj['headers'],
                                    method=method, post_data=body)
+        if 'type' in urlObj:
+            # zip数据转换为hex
+            content = respone.content.hex()
 
     if respone:
         urlObj['finalurl'] = str(respone.url)
