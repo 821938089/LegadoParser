@@ -25,7 +25,7 @@ setup(
 
     install_requires=install_requires,
 
-    extras_require=extras_require
+    extras_require=extras_require,
 
     package_data=package_data
 )
