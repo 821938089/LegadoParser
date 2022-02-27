@@ -11,12 +11,14 @@ with open('requirements.txt', 'r') as f:
 with open('LegadoParser2/config.py', 'r+', encoding='utf-8') as f:
     # 关闭调试模式
     t = f.read()
-    t = t.replace('DEBUG_MODE = True', 'DEBUG_MODE = False')
 
-    f.truncate(0)
-    f.seek(0)
+    if not ~t.find('DEBUG_MODE = True'):
+        t = t.replace('DEBUG_MODE = True', 'DEBUG_MODE = False')
 
-    f.write(t)
+        f.truncate(0)
+        f.seek(0)
+
+        f.write(t)
 
 extra_ocr = ['fonttools~=4.29.1', 'cnocr~=2.1.0']
 
