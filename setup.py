@@ -8,7 +8,7 @@ with open('requirements.txt', 'r') as f:
     t = f.read()
     install_requires = list(filter(None, t.split('\n')))
 
-with open('LegadoParser2/config.py', 'r+') as f:
+with open('LegadoParser2/config.py', 'r+', encoding='utf-8') as f:
     # 关闭调试模式
     t = f.read()
     t = t.replace('DEBUG_MODE = True', 'DEBUG_MODE = False')
