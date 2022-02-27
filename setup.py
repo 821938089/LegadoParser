@@ -12,6 +12,8 @@ extra_ocr = ['fonttools~=4.29.1', 'cnocr~=2.1.0']
 
 extras_require = {'ocr': extra_ocr}
 
+package_data = {'': ['*.dll', '*.pyd', '*.js']}
+
 setup(
     name='LegadoParser',
     version=__version__,
@@ -24,4 +26,5 @@ setup(
     install_requires=install_requires,
 
     extras_require=extras_require
-)
+
+    package_data=)
