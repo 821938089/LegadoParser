@@ -8,6 +8,16 @@ with open('requirements.txt', 'r') as f:
     t = f.read()
     install_requires = list(filter(None, t.split('\n')))
 
+with open('LegadoParser2/config.py', 'r+') as f:
+    # 关闭调试模式
+    t = f.read()
+    t = t.replace('DEBUG_MODE = True', 'DEBUG_MODE = False')
+
+    f.truncate(0)
+    f.seek(0)
+
+    f.write(t)
+
 extra_ocr = ['fonttools~=4.29.1', 'cnocr~=2.1.0']
 
 extras_require = {'ocr': extra_ocr}
