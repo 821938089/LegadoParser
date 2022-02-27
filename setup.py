@@ -29,7 +29,7 @@ extras_require = {'ocr': extra_ocr}
 package_data = {'': ['*.dll', '*.pyd', '*.js']}
 
 if sys.platform == 'win32':
-    python_requires = '==3.9'
+    python_requires = '==3.9.*'
 else:
     python_requires = '>=3.8, <4'
 
