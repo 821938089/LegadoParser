@@ -37,6 +37,12 @@ pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser[ocr]
 
 安装后使用webView获取章节内容会自动检测是否需要OCR
 
+### 升级
+
+```bash
+pip install -U git+https://github.com/821938089/LegadoParser#egg=LegadoParser
+```
+
 ### 卸载
 
 ```bash
