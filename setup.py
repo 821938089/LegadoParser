@@ -2,6 +2,8 @@ from setuptools import setup, find_packages
 
 from LegadoParser2 import __version__
 
+import sys
+
 install_requires = []
 
 with open('requirements.txt', 'r') as f:
@@ -26,6 +28,11 @@ extras_require = {'ocr': extra_ocr}
 
 package_data = {'': ['*.dll', '*.pyd', '*.js']}
 
+if sys.platform == 'win32':
+    python_requires = '==3.9'
+else:
+    python_requires = '>=3.8, <4'
+
 setup(
     name='LegadoParser',
     version=__version__,
@@ -39,5 +46,7 @@ setup(
 
     extras_require=extras_require,
 
-    package_data=package_data
+    package_data=package_data,
+
+    python_requires=python_requires
 )
