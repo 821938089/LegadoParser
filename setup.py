@@ -27,4 +27,5 @@ setup(
 
     extras_require=extras_require
 
-    package_data=)
+    package_data=package_data
+)
