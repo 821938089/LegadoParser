@@ -21,27 +21,29 @@ Windows下需要Python 3.9版本，其他Python版本的部分依赖安装需要
 ### Windows （Python 3.9）
 
 ```bash
-git clone https://github.com/821938089/LegadoParser
-cd LegadoParser
-pip install -r requirements_win.txt
+pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser
 ```
 
 ### Linux/WSL （Python 3.8+）
 
 ```bash
-git clone https://github.com/821938089/LegadoParser
-cd LegadoParser
 sudo apt-get install libxml2 libxml2-dev
-pip install -r requirements_linux.txt
+pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser
 ```
 
 ### OCR可选安装
 
-~~~bash
-pip install -r requirements_ocr.txt
-~~~
+```bash
+pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser[ocr]
+```
 
 安装后使用webView获取章节内容会自动检测是否需要OCR
+
+### 卸载
+
+```bash
+pip uninstall LegadoParser -y
+```
 
 ## 基础用法
 
