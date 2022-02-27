@@ -1,4 +1,7 @@
 __all__ = ['Search', 'BookInfo', 'ChapterList', 'Chapter', 'RuleEval', 'RulePacket']
+
+__version__ = '1.0.0'
+
 from LegadoParser2.config import DEBUG_MODE
 
 if not DEBUG_MODE:

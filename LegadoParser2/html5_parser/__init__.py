@@ -55,7 +55,7 @@ def check_for_meta_charset(raw):
 
 
 def detect_encoding(raw):
-    from chardet import detect  # delay load
+    from charset_normalizer import detect  # delay load
     q = raw[:50 * 1024]
     return detect(q)['encoding']
 
@@ -218,7 +218,7 @@ def parse(
         stack_size=stack_size,
         fragment_context=fragment_context,
         fragment_namespace=fragment_namespace,
-        )
+    )
 
     interpreter = None
     if treebuilder == 'lxml_html':
