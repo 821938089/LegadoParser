@@ -12,7 +12,7 @@ with open('LegadoParser2/config.py', 'r+', encoding='utf-8') as f:
     # 关闭调试模式
     t = f.read()
 
-    if not ~t.find('DEBUG_MODE = True'):
+    if ~t.find('DEBUG_MODE = True'):
         t = t.replace('DEBUG_MODE = True', 'DEBUG_MODE = False')
 
         f.truncate(0)
