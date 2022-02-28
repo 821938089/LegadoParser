@@ -296,17 +296,21 @@
          }
          strToMd5By32('123')
          ```
-       * ~~变量~~（不支持）
+       * 变量
 
-         ```
-         baseUrl 变量-当前url,String
-         result 变量-上一步的结果
-         book 变量-书籍类,方法见 io.legado.app.data.entities.Book
-         cookie 变量-cookie操作类,方法见 io.legado.app.help.http.CookieStore
-         cache 变量-缓存操作类,方法见 io.legado.app.help.CacheManager
-         chapter 变量-当前目录类,方法见 io.legado.app.data.entities.BookChapter
-         title 变量-当前标题,String
-         src 内容,源码
+         【实现细节差异】
+
+         绿色为支持，红色为不支持。
+
+         ```diff
+         +baseUrl 变量-当前url,String
+         +result 变量-上一步的结果
+         -book 变量-书籍类,方法见 io.legado.app.data.entities.Book
+         -cookie 变量-cookie操作类,方法见 io.legado.app.help.http.CookieStore
+         -cache 变量-缓存操作类,方法见 io.legado.app.help.CacheManager
+         -chapter 变量-当前目录类,方法见 io.legado.app.data.entities.BookChapter
+         -title 变量-当前标题,String
+         -src 内容,源码
          ```
        * 下面是一些常用的函数，详见[JsExtensions.kt](https://github.com/gedoor/legado/blob/master/app/src/main/java/io/legado/app/help/JsExtensions.kt)
 
