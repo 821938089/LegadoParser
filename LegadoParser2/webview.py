@@ -131,8 +131,8 @@ def createDriverInstance(userAgent=USER_AGENT):
     options.set_capability('unhandledPromptBehavior', 'accept')
     global _executable_path
     if not _executable_path:
-        _executable_path = ChromeDriverManager(log_level=logging.NOTSET)
-    service = Service(executable_path=_executable_path.install())
+        _executable_path = ChromeDriverManager(log_level=logging.NOTSET).install()
+    service = Service(executable_path=_executable_path)
     driver = webdriver.Chrome(service=service, options=options)
     return driver
 

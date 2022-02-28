@@ -8,13 +8,13 @@ from LegadoParser2.RuleUrl.BodyType import Body
 from LegadoParser2.RuleUrl.UrlEval import getUrlRuleObj
 from LegadoParser2.RuleEval import getString
 from LegadoParser2.webview import WebView
-from LegadoParser2.config import DEBUG_MODE, USER_AGENT
+from LegadoParser2.config import DEBUG_MODE, USER_AGENT, CAN_USE_WEBVIEW
 
 
 def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
     urlObj = {
         'url': '',
-        'rawUrl': ruleUrl,
+        'rawUrl': ruleUrl,  # = baseUrl
         'method': 'GET',
         'body': '',
         'headers': {},
@@ -23,6 +23,8 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
         'webJs': '',
         'allFontFaceUrl': None,
         'webViewSession': None,
+        'type': None
+        # finalUrl = redirectUrl
     }
     bodyType = None
     ruleObj = getUrlRuleObj(ruleUrl)
@@ -126,7 +128,7 @@ def getContent(urlObj):
     userAgent = urlObj['headers']['User-Agent']
     respone = None
 
-    if urlObj['webView'] and (bodyType is None or bodyType == Body.FORM) and 'type' not in urlObj:
+    if CAN_USE_WEBVIEW and urlObj['webView'] and (bodyType is None or bodyType == Body.FORM) and urlObj['type'] is not None:
         if not urlObj.get('webViewSession'):
             webView = WebView(userAgent)
             urlObj['webViewSession'] = webView
@@ -144,7 +146,7 @@ def getContent(urlObj):
             body = body.encode(charset)
         content, __, respone = req(url, header=urlObj['headers'],
                                    method=method, post_data=body)
-        if 'type' in urlObj:
+        if urlObj['type']:
             # zip数据转换为hex
             content = respone.content.hex()
 
