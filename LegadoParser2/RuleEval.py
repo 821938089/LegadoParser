@@ -8,8 +8,12 @@ from LegadoParser2.config import DEBUG_MODE
 from lxml.etree import _Element, tostring
 from copy import deepcopy
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from LegadoParser2.RuleJs.JS import EvalJs
 
-def getElements(content, rulesObj, evalJs):
+
+def getElements(content, rulesObj, evalJs: 'EvalJs'):
     if content and content[0] in {'{', ']'} and content[-1] in {'}', ']'}:
         # 当内容是json是默认规则为JsonPath
         for rule in rulesObj:
@@ -91,10 +95,10 @@ def getString(content, rulesObj, evalJs, **kwargs):
     return result
 
 
-def putProcessor(content, rule, evalJs):
+def putProcessor(content, rule, evalJs: 'EvalJs'):
     compiledPutRules = rule['preProcess']['compiledPutRules']
     for key, r in compiledPutRules.items():
-        evalJs.putVAR(key, getString(content, r, evalJs))
+        evalJs.putVariable(key, getString(content, r, evalJs))
 
 
 def jsProcessor(content, evalJs, rule, **kwargs):
@@ -133,7 +137,7 @@ def jsProcessor(content, evalJs, rule, **kwargs):
         return [result]
 
 
-def formatProcrssor(content, rule, evalJs):
+def formatProcrssor(content, rule, evalJs: 'EvalJs'):
     # 处理 {{ }}  @get:{ } {$. } $1
 
     joinSymbol = rule['joinSymbol']
@@ -177,7 +181,7 @@ def formatProcrssor(content, rule, evalJs):
         for idx, r in enumerate(regexRules):
             rawRules[regexRules[idx][1]] = content[int(r[0][1]) - 1]
         for idx, r in enumerate(getRules):
-            rawRules[getRules[idx][1]] = evalJs.getVAR(r[0])
+            rawRules[getRules[idx][1]] = evalJs.getVariable(r[0])
             rawRules[getRules[idx][1] - 1] = ''
             rawRules[getRules[idx][1] + 1] = ''
         resultList.append(''.join(rawRules))

@@ -248,9 +248,6 @@
        * `java.put`与 `java.get`
 
          只能用于js中，在js中无法使用@get
-       * 【实现细节差异】
-
-         * 变量无法跨函数存取，例如 `ruleSearch`中的变量无法在 `ruleBookInfo`中使用。
      * `{{}}`与 `{}`规则
 
        * 在搜索URL与发现URL中的 `{{}}`

@@ -5,12 +5,12 @@
 """
 from LegadoParser2.RuleJs.JS import EvalJs
 from LegadoParser2.RuleEval import getElements, getStrings, getString
-from LegadoParser2.RulePacket import getRuleObj, trimBookSource
 from LegadoParser2.RuleUrl.Url import parseUrl, getContent
 from LegadoParser2.RuleUrl.BodyType import Body
 from LegadoParser2.FormatUtils import Fmt
 from LegadoParser2.BookInfo import parseBookInfo
 from LegadoParser2.config import DEBUG_MODE
+# from lxml.html import tostring
 # from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 # from httpx._exceptions import RequestError
 # from urllib.parse import urlparse
@@ -25,13 +25,13 @@ from LegadoParser2.config import DEBUG_MODE
 # 3、通过规则解析获取统一结构的书籍搜索数据
 
 
-def search(bS, key, page=1):
-    trimBookSource(bS)
-    evalJS = EvalJs(bS)
-    searchObj = parseSearchUrl(bS, key, page, evalJS)
+def search(compiledBookSource, key, page=1):
+    # trimBookSource(bS)
+    evalJS = EvalJs(compiledBookSource)
+    searchObj = parseSearchUrl(compiledBookSource, key, page, evalJS)
     content, redirected = getContent(searchObj)
-    # cProfile.runctx('getSearchResult(bS, searchObj, content)', globals(), locals(), 'program.prof')
-    return getSearchResult(bS, searchObj, content, evalJS)
+
+    return getSearchResult(compiledBookSource, searchObj, content, evalJS)
 
 
 def parseSearchUrl(bS, key, page, evalJs):
@@ -93,56 +93,47 @@ def parseSearchUrl(bS, key, page, evalJs):
 #         return content, redirected
 
 
-def getSearchResult(bS, urlObj, content, evalJS, **kwargs):
+def getSearchResult(bS, urlObj, content, evalJs: EvalJs, **kwargs):
     ruleSearch = bS['ruleSearch']
     if not ruleSearch:
         return []
+
     redirected = urlObj['redirected']
     useWebView = urlObj['webView']
-    elements = getElements(content, getRuleObj(ruleSearch['bookList']), evalJS)
+
+    elements = getElements(content, ruleSearch['bookList'], evalJs)
 
     if not elements and (redirected or useWebView):
-        return [parseBookInfo(bS, urlObj, content, evalJS)]
+        return [parseBookInfo(bS, urlObj, content, evalJs)]
 
     searchResult = []
     finalUrl = urlObj['finalurl']  # 最终访问的url，可能是跳转后的Url
     # finalUrl = urlparse(finalUrl)._replace(query='').geturl()  # 去除query
 
-    rulesName = getRuleObj(ruleSearch['name'])
-    rulesBookUrl = getRuleObj(ruleSearch['bookUrl'])
-    if ruleSearch.get('author', None):
-        rulesAuthor = getRuleObj(ruleSearch['author'])
-    if ruleSearch.get('kind', None):
-        rulesKind = getRuleObj(ruleSearch['kind'])
-    if ruleSearch.get('coverUrl', None):
-        rulesCoverUrl = getRuleObj(ruleSearch['coverUrl'])
-    if ruleSearch.get('wordCount', None):
-        rulesWordCount = getRuleObj(ruleSearch['wordCount'])
-    if ruleSearch.get('intro', None):
-        rulesIntro = getRuleObj(ruleSearch['intro'])
-    if ruleSearch.get('lastChapter', None):
-        rulesLastChapter = getRuleObj(ruleSearch['lastChapter'])
-
     for e in elements:
 
         bookInfo = {}
+        # if DEBUG_MODE:
+        #     ehtml = tostring(e, encoding='utf-8').decode()
         try:
-            bookInfo['name'] = Fmt.bookName(getString(e, rulesName, evalJS).strip())
-            bookInfo['bookUrl'] = urljoin(finalUrl, getStrings(e, rulesBookUrl, evalJS)[0].strip())
+            bookInfo['name'] = Fmt.bookName(getString(e, ruleSearch['name'], evalJs).strip())
+            bookInfo['bookUrl'] = urljoin(finalUrl, getStrings(
+                e, ruleSearch['bookUrl'], evalJs)[0].strip())
             if ruleSearch.get('author', None):
-                bookInfo['author'] = Fmt.author(getString(e, rulesAuthor, evalJS).strip())
+                bookInfo['author'] = Fmt.author(getString(e, ruleSearch['author'], evalJs).strip())
             if ruleSearch.get('kind', None):
-                bookInfo['kind'] = ','.join(getStrings(e, rulesKind, evalJS)).strip()
+                bookInfo['kind'] = ','.join(getStrings(e, ruleSearch['kind'], evalJs)).strip()
             if ruleSearch.get('coverUrl', None):
                 bookInfo['coverUrl'] = urljoin(finalUrl,
-                                               getString(e, rulesCoverUrl, evalJS).strip())
+                                               getString(e, ruleSearch['coverUrl'], evalJs).strip())
             if ruleSearch.get('wordCount', None):
-                bookInfo['wordCount'] = Fmt.wordCount(getString(e, rulesWordCount, evalJS).strip())
+                bookInfo['wordCount'] = Fmt.wordCount(
+                    getString(e, ruleSearch['wordCount'], evalJs).strip())
             if ruleSearch.get('intro', None):
-                bookInfo['intro'] = Fmt.html(getString(e, rulesIntro, evalJS).strip())
+                bookInfo['intro'] = Fmt.html(getString(e, ruleSearch['intro'], evalJs).strip())
             if ruleSearch.get('lastChapter', None):
-                bookInfo['lastChapter'] = getString(e, rulesLastChapter, evalJS).strip()
-
+                bookInfo['lastChapter'] = getString(e, ruleSearch['lastChapter'], evalJs).strip()
+            bookInfo['variables'] = evalJs.dumpVariables()
         except IndexError as e:
             if not len(searchResult):
                 if DEBUG_MODE:

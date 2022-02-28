@@ -58,36 +58,55 @@ pip uninstall LegadoParser -y
 ## 高级API
 
 ```python
+from LegadoParser2.RulePacket import compileBookSource
+
+def compileBookSource(bookSource, specify=''):
+"""
+书源规则编译函数
+
+参数 - 描述 - 类型
+
+bookSource - 书源json - dict
+specify - 只编译指定规则组 - str
+
+
+specify 可选 ('ruleSearch', 'ruleBookInfo', 'ruleToc', 'ruleContent')
+
+"""
+```
+
+```python
 from LegadoParser2.Search import search
 
-def search(bS, key, page=1):
+def search(compiledBookSource, key, page=1):
 """
 搜索函数
 
 参数 - 描述 - 类型
 
-bS - 书源 - dict
+compiledBookSource- 经过compileBookSource函数编译的书源规则 - dict
 key - 搜索 - str
 page - 页数 - int
 
-返回值 list[dict]
 
 注意：如果搜索后直接跳转到了详情页，将调用parseBookInfo获取信息，字典key注意差异。
 书籍Url的key将从bookUrl变为tocUrl。
+
 """
 ```
 
 ```python
 from LegadoParser2.BookInfo import getBookInfo
 
-def getBookInfo(bS, url):
+def getBookInfo(compiledBookSource, url, variables):
 """
 获取详情信息
 
 参数 - 描述 - 类型
 
-bS - 书源 - dict
+compiledBookSource- 经过compileBookSource函数编译的书源规则 - dict
 url - search函数中返回的 bookUrl 或 tocUrl - str
+variables - search函数中返回的variables - dict
 
 """
 ```
@@ -95,30 +114,33 @@ url - search函数中返回的 bookUrl 或 tocUrl - str
 ```python
 from LegadoParser2.ChapterList import getChapterList
 
-def getChapterList(bS, url):
+def getChapterList(compiledBookSource, url, variables):
 """
 获取章节列表
 
 参数 - 描述 - 类型
 
-bS - 书源 - dict
+compiledBookSource- 经过compileBookSource函数编译的书源规则 - dict
 url - getBookInfo函数中返回的tocUrl - str
+variables - getBookInfo函数中返回的variables - dict
 
 """
 ```
 
 ```python
-from LegadoParser2.Chapter import getChapterContent
+compileBookSourcefrom LegadoParser2.Chapter import getChapterContent
 
-def getChapterContent(bS, url, nextChapterUrl=''):
+def getChapterContent(compiledBookSource, url, variables, nextChapterUrl=''):
 """
 获取章节内容
 
 参数 - 描述 - 类型
 
-bS - 书源 - dict
+compiledBookSource- 经过compileBookSource函数编译的书源规则 - dict
 url - getChapterList函数中返回的url - str
 nextChapterUrl - 下一章的url - str
+variables - getChapterList函数中返回的variables - dict
+
 """
 ```
 
@@ -126,7 +148,8 @@ nextChapterUrl - 下一章的url - str
 from LegadoParser2.RuleEval import getElements, getString, getStrings
 from LegadoParser2.RulePacket import getRuleObj
 
-# 基础API
+# 基础API，根据规则提取数据
+# 详细参数见源码
 ```
 
 ## 示例结果

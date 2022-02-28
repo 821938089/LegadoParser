@@ -3,7 +3,6 @@ import sys
 from LegadoParser2.FormatUtils import Fmt
 from LegadoParser2.RuleUrl.Url import parseUrl, getContent, urljoin
 from LegadoParser2.RuleJs.JS import EvalJs
-from LegadoParser2.RulePacket import getRuleObj, trimBookSource
 from lxml.etree import HTML
 from LegadoParser2.RuleEval import getElements, getString, getStrings
 from concurrent.futures import ThreadPoolExecutor
@@ -18,33 +17,28 @@ else:
     from html5_parser import parse
 
 
-def getChapterContent(bS, url, nextChapterUrl=''):
-    trimBookSource(bS)
-    ruleContent = bS['ruleContent']
-    evalJs = EvalJs(bS)
-    if bS.get('header', None):
-        headers = bS['header']
+def getChapterContent(compiledBookSource, url, variables, nextChapterUrl=''):
+    # trimBookSource(compiledBookSource)
+    ruleContent = compiledBookSource['ruleContent']
+    evalJs = EvalJs(compiledBookSource)
+    evalJs.loadVariables(variables)
+    if compiledBookSource.get('header'):
+        headers = compiledBookSource['header']
     else:
         headers = ''
     urlObj = parseUrl(url, evalJs, headers=headers)
-    if ruleContent.get('webJs', None):
+    if ruleContent.get('webJs'):
         urlObj['webJs'] = ruleContent['webJs']
     evalJs.set('baseUrl', url)
     content, __ = getContent(urlObj)
-    return parseContent(bS, urlObj, content.strip(), evalJs, nextChapterUrl=nextChapterUrl)
+    return parseContent(compiledBookSource, urlObj, content.strip(), evalJs, nextChapterUrl=nextChapterUrl)
 
 
 def parseContent(bS, urlObj, content, evalJs, **kwargs):
     ruleContent = bS['ruleContent']
-    nextChapterUrl = kwargs.get('nextChapterUrl', None)
+    nextChapterUrl = kwargs.get('nextChapterUrl')
     if not ruleContent:
         return {}
-    if ruleContent.get('content', None):
-        rulesContent = getRuleObj(ruleContent['content'])
-    if ruleContent.get('nextContentUrl', None):
-        rulesNextContentUrl = getRuleObj(ruleContent['nextContentUrl'])
-    if ruleContent.get('replaceRegex', None):
-        rulesReplaceRegex = getRuleObj(ruleContent['replaceRegex'])
 
     _content = content
 
@@ -60,13 +54,13 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
 
     def parseCt(content):
 
-        if ruleContent.get('content', None):
+        if ruleContent.get('content'):
             chapterContent['content'] += getString(
-                content, rulesContent, evalJs, rawContent=_content)
+                content, ruleContent['content'], evalJs, rawContent=_content)
             chapterContent['content'] += '\n'
-        if ruleContent.get('nextContentUrl', None):
+        if ruleContent.get('nextContentUrl'):
             nextContentUrls = getStrings(
-                content, rulesNextContentUrl, evalJs, rawContent=_content)
+                content, ruleContent['nextContentUrl'], evalJs, rawContent=_content)
         else:
             nextContentUrls = None
 
@@ -99,9 +93,9 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
     if chapterContent['content']:
         chapterContent['content'] = Fmt.html(chapterContent['content'])
 
-    if ruleContent.get('replaceRegex', None):
+    if ruleContent.get('replaceRegex'):
         chapterContent['content'] = getString(
-            chapterContent['content'], rulesReplaceRegex, evalJs, rawContent=_content)
+            chapterContent['content'], ruleContent['replaceRegex'], evalJs, rawContent=_content)
     try:
         if urlObj['webViewSession'] and checkPUA(chapterContent['content']):
             if DEBUG_MODE:

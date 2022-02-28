@@ -5,7 +5,6 @@ import json
 # from httpx._exceptions import RequestError
 import traceback
 import json
-from LegadoParser2.RuleUrl.Url import parseUrl, getContent
 from quickjs import Object
 import os
 from LegadoParser2.config import DEBUG_MODE
@@ -20,7 +19,7 @@ class EvalJs(object):
 
         self.bS = bS
         self.context = quickjs.Context()
-        self.VAR = {}  # 存放put get方法的内容
+        self.variables = {}  # 存放put get方法的内容
         if not _jsCache:
             filePath = os.path.dirname(os.path.abspath(__file__))
             with open(os.path.join(filePath, 'jsExtension.js'), 'r') as f:
@@ -29,8 +28,8 @@ class EvalJs(object):
         else:
             self.context.eval(_jsCache)
 
-        self.context.add_callable('pyPut', self.putVAR)
-        self.context.add_callable('pyGet', self.getVAR)
+        self.context.add_callable('pyPut', self.putVariable)
+        self.context.add_callable('pyGet', self.getVariable)
         self.context.add_callable('pyAjax', self.ajax)
         self.context.add_callable('pyGetZipStringContent', getZipStringContent)
         self.context.add_callable('pyGetString', self.getString)
@@ -63,17 +62,24 @@ class EvalJs(object):
         else:
             return str(result)
 
-    def putVAR(self, key, value):
-        self.VAR[key] = value
+    def putVariable(self, key, value):
+        self.variables[key] = value
         return value
 
-    def getVAR(self, key):
+    def getVariable(self, key):
         try:
-            return self.VAR[key]
+            return self.variables[key]
         except:
             return ''
 
+    def dumpVariables(self):
+        return self.variables.copy()
+
+    def loadVariables(self, variable):
+        self.variables = variable.copy()
+
     def ajax(self, url):
+        from LegadoParser2.RuleUrl.Url import parseUrl, getContent
         try:
             if DEBUG_MODE:
                 print(url)

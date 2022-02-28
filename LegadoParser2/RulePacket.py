@@ -10,6 +10,7 @@ from jsonpath_ng.exceptions import JSONPathError
 import re
 from LegadoParser2 import GSON
 from LegadoParser2.config import DEBUG_MODE
+from copy import deepcopy
 
 
 def packet(rules):
@@ -311,6 +312,26 @@ def trimBookSource(bS):
             bS[k] = bS[k].strip()
         elif isinstance(bS[k], dict):
             trimBookSource(bS[k])
+
+
+def compileBookSource(bookSource, specify=''):
+    bookSource = deepcopy(bookSource)
+    trimBookSource(bookSource)
+    ruleGroupNames = ('ruleSearch', 'ruleBookInfo', 'ruleToc', 'ruleContent')
+    if specify in bookSource:
+        for key in bookSource[specify]:
+            if key == 'webJs':
+                continue
+            if bookSource[specify][key]:
+                bookSource[specify][key] = getRuleObj(bookSource[specify][key])
+    else:
+        for ruleGroupName in ruleGroupNames:
+            for key in bookSource[ruleGroupName]:
+                if key == 'webJs':
+                    continue
+                if bookSource[ruleGroupName][key]:
+                    bookSource[ruleGroupName][key] = getRuleObj(bookSource[ruleGroupName][key])
+    return bookSource
 
 
 # print(packet(tokenizer('[property=\"og:description\"]@content##(^|[。！？]+[”」）】]?)##$1<br>')))

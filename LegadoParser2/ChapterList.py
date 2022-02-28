@@ -1,6 +1,5 @@
 from LegadoParser2.RuleUrl.Url import parseUrl, getContent, urljoin
 from LegadoParser2.RuleJs.JS import EvalJs
-from LegadoParser2.RulePacket import getRuleObj, trimBookSource
 from LegadoParser2.RuleEval import getElements, getString, getStrings
 from LegadoParser2.utils import validateFlag
 from concurrent.futures import ThreadPoolExecutor
@@ -8,71 +7,57 @@ from concurrent.futures import ThreadPoolExecutor
 
 # from lxml.etree import HTML
 
-def getChapterList(bS, url):
-    trimBookSource(bS)
-    evalJs = EvalJs(bS)
-    if bS.get('header', None):
-        headers = bS['header']
+def getChapterList(compiledBookSource, url, variables):
+    # trimBookSource(compiledBookSource)
+    evalJs = EvalJs(compiledBookSource)
+    evalJs.loadVariables(variables)
+    if compiledBookSource.get('header', None):
+        headers = compiledBookSource['header']
     else:
         headers = ''
     urlObj = parseUrl(url, evalJs, headers=headers)
     evalJs.set('baseUrl', url)
     content, __ = getContent(urlObj)
-    return parseChapterList(bS, urlObj, content.strip(), evalJs)
+    return parseChapterList(compiledBookSource, urlObj, content.strip(), evalJs)
 
 
-def parseChapterList(bS, urlObj, content, evalJs):
+def parseChapterList(bS, urlObj, content, evalJs: EvalJs):
     ruleToc = bS['ruleToc']
 
     if not ruleToc:
         return []
-    if ruleToc.get('chapterList', None):
-        rulesChapterList = getRuleObj(ruleToc['chapterList'])
-    if ruleToc.get('chapterName', None):
-        rulesChapterName = getRuleObj(ruleToc['chapterName'])
-    if ruleToc.get('chapterUrl', None):
-        rulesChapterUrl = getRuleObj(ruleToc['chapterUrl'])
-    if ruleToc.get('isPay', None):
-        rulesIsPay = getRuleObj(ruleToc['isPay'])
-    if ruleToc.get('isVip', None):
-        rulesIsVip = getRuleObj(ruleToc['isVip'])
-    if ruleToc.get('isVolume', None):
-        rulesIsVolume = getRuleObj(ruleToc['isVolume'])
-    if ruleToc.get('nextTocUrl', None):
-        rulesNextTocUrl = getRuleObj(ruleToc['nextTocUrl'])
-    if ruleToc.get('updateTime', None):
-        rulesUpdateTime = getRuleObj(ruleToc['updateTime'])
 
     chapterList = []
 
     def parseCL(content):
 
-        elements = getElements(content, rulesChapterList, evalJs)
+        elements = getElements(content, ruleToc['chapterList'], evalJs)
         if ruleToc.get('nextTocUrl', None):
-            nextTocUrls = getStrings(content, rulesNextTocUrl, evalJs)
+            nextTocUrls = getStrings(content, ruleToc['nextTocUrl'], evalJs)
         else:
             nextTocUrls = None
         for e in elements:
             chapter = {}
             if ruleToc.get('chapterName', None):
-                chapter['name'] = getString(e, rulesChapterName, evalJs)
+                chapter['name'] = getString(e, ruleToc['chapterName'], evalJs)
             if ruleToc.get('chapterUrl', None):
-                chapter['url'] = getString(e, rulesChapterUrl, evalJs)
+                chapter['url'] = getString(e, ruleToc['chapterUrl'], evalJs)
                 if chapter['url']:
                     chapter['url'] = urljoin(urlObj['finalurl'], chapter['url'])
             if not chapter.get('url'):
                 chapter['url'] = urlObj['rawUrl']
             if ruleToc.get('isPay', None):
-                chapter['isPay'] = getString(e, rulesIsPay, evalJs)
+                chapter['isPay'] = getString(e, ruleToc['isPay'], evalJs)
                 chapter['isPay'] = validateFlag(chapter['isPay'])
             if ruleToc.get('isVip', None):
-                chapter['isVip'] = getString(e, rulesIsVip, evalJs)
+                chapter['isVip'] = getString(e, ruleToc['isVip'], evalJs)
                 chapter['isVip'] = validateFlag(chapter['isVip'])
             if ruleToc.get('isVolume', None):
-                chapter['isVolume'] = getString(e, rulesIsVolume, evalJs)
+                chapter['isVolume'] = getString(e, ruleToc['isVolume'], evalJs)
                 chapter['isVolume'] = validateFlag(chapter['isVolume'])
             if ruleToc.get('updateTime', None):
-                chapter['updateTime'] = getString(e, rulesUpdateTime, evalJs)
+                chapter['updateTime'] = getString(e, ruleToc['updateTime'], evalJs)
+            chapter['variables'] = evalJs.dumpVariables()
             if chapter['name']:
                 chapterList.append(chapter)
 
