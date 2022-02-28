@@ -52,7 +52,7 @@ def parseSearchUrl(bS, key, page, evalJs):
 
     searchObj = parseUrl(searchUrl, evalJs, baseUrl, headers)
 
-    evalJs.set('baseUrl', searchObj['url'])
+    evalJs.set('baseUrl', searchObj['rawUrl'])
     return searchObj
 
 
