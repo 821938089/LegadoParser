@@ -190,3 +190,7 @@ from LegadoParser2.RulePacket import getRuleObj
 略
 --------------------结束--------------------
 ```
+
+## [License](./LICENSE)
+
+[![GLWTPL](https://img.shields.io/badge/GLWT-Public_License-red.svg)](https://github.com/me-shaon/GLWTPL)
