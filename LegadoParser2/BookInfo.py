@@ -80,7 +80,7 @@ def parseBookInfo(bS, urlObj, content, evalJs):
         bookInfo['tocUrl'] = urlObj['rawUrl']
         # bookInfo['tocHtml'] = _content
 
+    bookInfo['bookUrl'] = urlObj['finalurl']
     bookInfo['variables'] = evalJs.dumpVariables()
-    bookInfo['bookUrl'] = urlObj['finalUrl']
 
     return bookInfo

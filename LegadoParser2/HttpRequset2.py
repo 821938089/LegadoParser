@@ -41,7 +41,7 @@ def req(url, cellphone_mode=False, cookies='', header={}, method=0, post_data_ty
     elif 'user-agent' in header and header['user-agent'] != '':
         pass
     else:
-        if cellphone_mode == False:
+        if not cellphone_mode:
             tmp_header['User-Agent'] = 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/68.0.3440.106 Chrome/68.0.3440.106 Safari/537.36'
         else:
             tmp_header['User-Agent'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1'

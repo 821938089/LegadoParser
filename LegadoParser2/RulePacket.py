@@ -2,7 +2,8 @@
 
 from LegadoParser2.RuleType import RuleType, getRuleType2, getRuleType
 from LegadoParser2.Tokenize2 import tokenizer, tokenizerInner
-from LegadoParser2.RuleDefault.RuleDefaultEfficient2 import parseIndex, getElementsXpath, getStringsXpath
+from LegadoParser2.RuleDefault.RuleDefaultEfficient2 import parseIndex, getElementsXpath
+from LegadoParser2.RuleDefault.EndRule import EndRuleXpath
 from lxml.etree import _Element, tostring, XPath, XPathSyntaxError
 from cssselect import SelectorSyntaxError, ExpressionError
 from LegadoParser2.RuleJsonPath.RuleJsonPath import getJsonPath
@@ -258,21 +259,11 @@ def compileRule(rules):
                 pass
             try:
                 if cursor + 1 == length or rules[cursor + 1] in {'&&', '%%', '||'}:
-                    endPath = getStringsXpath(rules[cursor])
-                    if endPath:
-                        ruleObj['endXpath'] = XPath(endPath)
+                    ruleObj['endXpath'] = EndRuleXpath.get(rules[cursor])
 
             except XPathSyntaxError:
                 pass
-            except SelectorSyntaxError:
-                pass
-            except ExpressionError as e:
-                if DEBUG_MODE:
-                    print(f'不支持的选择器：{e}')
-                    raise
-                pass
-            except IndexError:
-                pass
+
             try:
                 if length == 1:
                     ruleObj['jsonPath'] = getJsonPath(rules[cursor])

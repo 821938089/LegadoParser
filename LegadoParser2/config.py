@@ -8,5 +8,8 @@ DEBUG_MODE = True
 
 CAN_USE_WEBVIEW = get_browser_version_from_os(ChromeType.GOOGLE) != 'UNKNOWN'
 
+if not CAN_USE_WEBVIEW:
+    print('未找到Google Chrome浏览器，已禁用webView。')
+
 if DEBUG_MODE:
     print('!!! 警告:你正处于调试模式下运行')

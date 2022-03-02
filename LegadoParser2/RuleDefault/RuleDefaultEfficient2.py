@@ -65,37 +65,6 @@ def getElementsByDefault(content, compileRule):
     return content
 
 
-# def getStringsByDefault(content, compileRule):
-
-#     if isinstance(content, list):
-#         _content = []
-#         for c in content:
-#             _content += getStringsByDefault(c, compileRule)
-#         return _content
-#     rule = compileRule['rule']
-#     Xpath = compileRule['endXpath']
-#     textRegex = re.compile('\n\s+')
-#     if rule == 'text':
-
-#         # return [getText(content)]
-#         return [''.join([textRegex.sub('', i) for i in Xpath(content)])]
-#         # return [tostring(content, method='text', encoding='utf-8').decode('utf-8')]
-#     elif rule == 'textNodes':
-
-#         return ['\n'.join([i.strip() for i in Xpath(content)])]
-#     elif rule == 'ownText':
-#         # return [getOwnText(content)]
-#         return [''.join(Xpath(content))]
-#     elif rule == 'html':
-#         for i in Xpath(content):
-#             i.getparent().remove(i)
-#         return [tostring(content, encoding='utf-8', method='html', with_tail=False).decode('utf-8')]
-#     elif rule == 'all':
-#         return [tostring(content, encoding='utf-8', method='html', with_tail=False).decode('utf-8')]
-#     else:
-#         return Xpath(content)
-
-
 def getStringsByDefault(content, compileRule):
     if isinstance(content, str):
         try:
@@ -296,14 +265,7 @@ def getStringsXpath(rule):
     elif rule == 'html':
         return './/script|.//style'
     else:
-        return f'.//@{rule}'
-    # print(parseIndex('a.b! 1:10 :2'))
-    # print(parseIndex('a.b. 1:10:2'))
-    # print(parseIndex('a.b[!1:10:2]'))
-    # print(parseIndex('a.b[!1:10:2,!3]'))
-    # print(parseIndex('a.b[!1:10 :2 ,!3,!4]'))
-    # print(parseIndex('[!1:10 :2 ,!3,!4]'))
-    # print(parseIndex('!1'))
+        return f'./@{rule}'
 
 
 def defaultProcessor(content, ruleObj, hasEndRule=False):
@@ -320,11 +282,6 @@ def defaultProcessor(content, ruleObj, hasEndRule=False):
             return lastResultList
 
     _content = content
-
-    # if hasEndRule == False:
-    #     getFunction = getElementsByDefault
-    # else:
-    #     getFunction = getStringsByDefault
 
     for subRule in subRules:
         for compileRule in subRule:
