@@ -1,3 +1,4 @@
+import html
 
 from LegadoParser2.RuleType import RuleType
 from LegadoParser2.RuleDefault.RuleDefaultEfficient2 import defaultProcessor
@@ -92,6 +93,7 @@ def getString(content, rulesObj, evalJs, **kwargs):
     result = '\n'.join(filter(None, result))
     if replaceRegexRuleObj:
         result = regexProcessor(result, replaceRegexRuleObj[0])[0]
+    result = html.unescape(result)
     return result
 
 
