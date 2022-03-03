@@ -32,7 +32,7 @@ class WebView(object):
         # https://stackoverflow.com/questions/29916054/change-user-agent-for-selenium-web-driver
         # https://chromedevtools.github.io/devtools-protocol/tot/Network/#method-setUserAgentOverride
             self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {
-                                        "userAgent": userAgent, "platform": ""})
+                                        "userAgent": userAgent})
             self.allFontFaceUrl = None
 
             if DEBUG_MODE:
@@ -57,8 +57,8 @@ class WebView(object):
         # 在页面加载前执行Js
         # https://stackoverflow.com/questions/31354352/selenium-how-to-inject-execute-a-javascript-in-to-a-page-before-loading-executi
         # https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-        # self.driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
-        #                             'source': "Object.defineProperty(navigator,'platform',{value:''})"})
+        self.driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
+                                    'source': "Object.defineProperty(navigator,'platform',{value:''})"})
 
         if userAgent:
             self.setUserAgent(userAgent)
@@ -115,9 +115,6 @@ class WebView(object):
             return self.driver.page_source
 
 
-_executable_path = None
-
-
 def createDriverInstance():
     options = webdriver.ChromeOptions()
     # user_data_dir = os.path.join(os.path.abspath("."), 'webview\AutomationProfile')
@@ -171,10 +168,8 @@ def createDriverInstance():
     # https://stackoverflow.com/questions/57700388/how-to-set-unexpectedalertbehaviour-in-selenium-python
     options.set_capability('unhandledPromptBehavior', 'accept')
 
-    global _executable_path
-    if not _executable_path:
-        _executable_path = ChromeDriverManager(log_level=logging.NOTSET).install()
-    service = Service(executable_path=_executable_path)
+    executable_path = ChromeDriverManager(log_level=logging.NOTSET).install()
+    service = Service(executable_path=executable_path)
     driver = webdriver.Chrome(service=service, options=options)
     return driver
 
