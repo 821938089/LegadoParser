@@ -1,12 +1,16 @@
 # 常量存放
 
 from webdriver_manager.utils import get_browser_version_from_os, ChromeType
+from webdriver_manager.logger import loggers
+import logging
 
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 
 DEBUG_MODE = True
 
 CAN_USE_WEBVIEW = get_browser_version_from_os(ChromeType.GOOGLE) != 'UNKNOWN'
+loggers['WDM'].setLevel(logging.NOTSET)
+
 
 if not CAN_USE_WEBVIEW:
     print('未找到Google Chrome浏览器，已禁用webView。')

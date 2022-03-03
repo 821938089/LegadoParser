@@ -74,11 +74,9 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
             allNextUrls = []
             if nextChapterUrl:
                 allNextUrls.append(nextChapterUrl)
-            webViewSession = urlObj.get('webViewSession')
             while nextContentUrls and nextUrl not in allNextUrls:
                 allNextUrls.append(nextUrl)
                 urlObj = parseUrl(nextUrl, evalJs)
-                urlObj['webViewSession'] = webViewSession
                 content, __ = getContent(urlObj)
                 nextContentUrls = parseCt(content)
                 if nextContentUrls:
@@ -97,7 +95,7 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
         chapterContent['content'] = getString(
             chapterContent['content'], ruleContent['replaceRegex'], evalJs, rawContent=_content)
     try:
-        if urlObj['webViewSession'] and checkPUA(chapterContent['content']):
+        if checkPUA(chapterContent['content']):
             if DEBUG_MODE:
                 print('parseContent 发现PUA字符，尝试OCR修复')
             PUAChars = collectPUAChars(chapterContent['content'])

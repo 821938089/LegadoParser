@@ -1,4 +1,6 @@
 import json
+import threading
+
 from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from LegadoParser2 import GSON
@@ -9,6 +11,9 @@ from LegadoParser2.RuleUrl.UrlEval import getUrlRuleObj
 from LegadoParser2.RuleEval import getString
 from LegadoParser2.webview import WebView
 from LegadoParser2.config import DEBUG_MODE, USER_AGENT, CAN_USE_WEBVIEW
+
+
+_lock = threading.Lock()
 
 
 def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
@@ -22,7 +27,6 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
         'webView': False,
         'webJs': '',
         'allFontFaceUrl': None,
-        'webViewSession': None,
         'type': None
         # finalUrl = redirectUrl
     }
@@ -128,17 +132,18 @@ def getContent(urlObj):
     userAgent = urlObj['headers']['User-Agent']
     respone = None
 
-    if CAN_USE_WEBVIEW and urlObj['webView'] and (bodyType is None or bodyType == Body.FORM) and urlObj['type'] is not None:
-        if not urlObj.get('webViewSession'):
-            webView = WebView(userAgent)
-            urlObj['webViewSession'] = webView
-        else:
-            webView = urlObj['webViewSession']
-        if urlObj['method'] == 'GET':
-            content = webView.getResponseByUrl(url, urlObj['webJs'])
-        elif urlObj['method'] == 'POST':
-            content = webView.getResponseByPost(url, body, charset, urlObj['webJs'])
-        urlObj['allFontFaceUrl'] = webView.allFontFaceUrl
+    if CAN_USE_WEBVIEW and urlObj['webView'] and (bodyType is None or bodyType == Body.FORM) and urlObj['type'] is None:
+        with _lock:
+            webView = WebView()
+            currentUrl = url
+
+            if urlObj['method'] == 'GET':
+                content, allFontFaceUrl, currentUrl = webView.getResponseByUrl(
+                    url, urlObj['webJs'], userAgent)
+                urlObj['allFontFaceUrl'] = allFontFaceUrl
+            elif urlObj['method'] == 'POST':
+                content = webView.getResponseByPost(url, body, charset, urlObj['webJs'])
+
     else:
         if body and bodyType == Body.FORM:
             body = urlencode(parse_qs(body, keep_blank_values=True), doseq=True, encoding=charset)
@@ -153,7 +158,7 @@ def getContent(urlObj):
     if respone:
         urlObj['finalurl'] = str(respone.url)
     elif urlObj['webView']:
-        urlObj['finalurl'] = webView.currentUrl
+        urlObj['finalurl'] = currentUrl
 
     if urlObj['allFontFaceUrl']:
         for fontFaceUrl in urlObj['allFontFaceUrl']:
