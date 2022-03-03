@@ -142,9 +142,10 @@ def formatProcrssor(content, rule, evalJs: 'EvalJs'):
 
     joinSymbol = rule['joinSymbol']
     crossJoin = rule['crossJoin']
-    lastResultList = []  # 上一个规则组的结果
     preProcessSubRules = rule['preProcess']['subRules']
     subRules = rule['subRules']
+
+    lastResultList = []  # 上一个规则组的结果
     resultList = []
     if content and isinstance(content, list) and isinstance(content[-1], tuple):
         lastResultList = content[:-1]
