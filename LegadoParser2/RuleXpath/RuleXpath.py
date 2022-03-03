@@ -43,7 +43,7 @@ def xpathProcessor(content, rule):
     crossJoin = rule['crossJoin']
     lastResultList = []  # 上一个规则组的结果
     resultList = []
-    if isinstance(content, list) and isinstance(content[-1], tuple):
+    if content and isinstance(content, list) and isinstance(content[-1], tuple):
         lastResultList = content[:-1]
         joinSymbol, content = content[-1]
         if lastResultList and joinSymbol == '||':

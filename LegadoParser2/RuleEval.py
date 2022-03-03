@@ -146,7 +146,7 @@ def formatProcrssor(content, rule, evalJs: 'EvalJs'):
     preProcessSubRules = rule['preProcess']['subRules']
     subRules = rule['subRules']
     resultList = []
-    if isinstance(content, list) and isinstance(content[-1], tuple):
+    if content and isinstance(content, list) and isinstance(content[-1], tuple):
         lastResultList = content[:-1]
         joinSymbol, content = content[-1]
         if lastResultList and joinSymbol == '||':
