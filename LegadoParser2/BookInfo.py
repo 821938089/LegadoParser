@@ -28,8 +28,8 @@ def getBookInfo(compiledBookSource, url, variables):
 
 def parseBookInfo(bS, urlObj, content, evalJs):
     ruleBookInfo = bS['ruleBookInfo']
-    if not ruleBookInfo:
-        return {}
+    # if not ruleBookInfo:
+    #     return {}
 
     _content = content
     if ruleBookInfo.get('init', None):

@@ -1,5 +1,6 @@
 import json
 import threading
+import re
 
 from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
@@ -14,6 +15,8 @@ from LegadoParser2.config import DEBUG_MODE, USER_AGENT, CAN_USE_WEBVIEW
 
 
 _lock = threading.Lock()
+
+needCompileRegex = re.compile(r'@js:|<js>|{{', re.IGNORECASE)
 
 
 def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
@@ -31,9 +34,13 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
         # finalUrl = redirectUrl
     }
     bodyType = None
-    ruleObj = getUrlRuleObj(ruleUrl)
+    if needCompileRegex.search(ruleUrl):
+        ruleObj = getUrlRuleObj(ruleUrl)
+    else:
+        ruleObj = None
 
-    if len(ruleObj) == 1 and ruleObj[0]['type'] != RuleType.DefaultOrEnd:
+    # if len(ruleObj) == 1 and ruleObj[0]['type'] != RuleType.DefaultOrEnd:
+    if ruleObj:
         _url = getString(ruleUrl, ruleObj, evalJs)
     else:
         _url = ruleUrl
@@ -100,20 +107,21 @@ def setDefaultHeaders(headers, bodyType):
             headers['Content-Type'] = 'text/xml'
 
 
-def urljoin(base, url):
-    # HttpCon = getLeftStr(base, '://')
-    # AddRoot = getMiddleStr(base, '://', '/')
-    if url.startswith('http'):
-        return url
-    HttpCon, AddRoot = base.split('://')
-    AddRoot = AddRoot.split('/')[0]
-    if url[:2] == '//':
-        return HttpCon + ':' + url
-    elif url[:1] == '/':
-        return HttpCon + '://' + AddRoot + url
+def urljoin(baseUrl, relativeUrl):
+    relativeUrl = relativeUrl.strip()
+    if relativeUrl == '#':
+        return baseUrl
+    if relativeUrl.startswith('http'):
+        return relativeUrl
+    scheme, address = baseUrl.split('://')
+    address = address.split('/')[0]
+    if relativeUrl[:2] == '//':
+        return scheme + ':' + relativeUrl
+    elif relativeUrl[:1] == '/':
+        return scheme + '://' + address + relativeUrl
     else:
-        pos = base.rfind('/')
-        return base[:pos + 1] + url
+        pos = baseUrl.rfind('/')
+        return baseUrl[:pos + 1] + relativeUrl
 
 
 def getContent(urlObj):

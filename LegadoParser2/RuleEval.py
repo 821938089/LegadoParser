@@ -87,12 +87,10 @@ def getStrings(content, rulesObj, evalJs, **kwargs):
 
 
 def getString(content, rulesObj, evalJs, **kwargs):
-    replaceRegexRuleObj = []  # 在regexProcessor中使用
-    result = getStrings(content, rulesObj, evalJs,
-                        replaceRegexRuleObj=replaceRegexRuleObj, **kwargs)
+
+    result = getStrings(content, rulesObj, evalJs, **kwargs)
     result = '\n'.join(filter(None, result))
-    if replaceRegexRuleObj:
-        result = regexProcessor(result, replaceRegexRuleObj[0])[0]
+
     result = html.unescape(result)
     return result
 
@@ -181,8 +179,9 @@ def formatProcrssor(content, rule, evalJs: 'EvalJs'):
             rawRules[jsonRules[idx][1]] = getString(content, rs, evalJs)
             rawRules[jsonRules[idx][1] - 1] = ''
             rawRules[jsonRules[idx][1] + 1] = ''
-        for idx, r in enumerate(regexRules):
-            rawRules[regexRules[idx][1]] = content[int(r[0][1]) - 1]
+        if isinstance(content, tuple):
+            for idx, r in enumerate(regexRules):
+                rawRules[regexRules[idx][1]] = content[int(r[0][1]) - 1]
         for idx, r in enumerate(getRules):
             rawRules[getRules[idx][1]] = evalJs.getVariable(r[0])
             rawRules[getRules[idx][1] - 1] = ''

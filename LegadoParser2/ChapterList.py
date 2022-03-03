@@ -29,13 +29,12 @@ def parseChapterList(bS, urlObj, content, evalJs: EvalJs):
 
     chapterList = []
 
+    chapterUrlSet = set()
+
     def parseCL(content):
 
         elements = getElements(content, ruleToc['chapterList'], evalJs)
-        if ruleToc.get('nextTocUrl', None):
-            nextTocUrls = getStrings(content, ruleToc['nextTocUrl'], evalJs)
-        else:
-            nextTocUrls = None
+
         for e in elements:
             chapter = {}
             if ruleToc.get('chapterName', None):
@@ -44,6 +43,7 @@ def parseChapterList(bS, urlObj, content, evalJs: EvalJs):
                 chapter['url'] = getString(e, ruleToc['chapterUrl'], evalJs)
                 if chapter['url']:
                     chapter['url'] = urljoin(urlObj['finalurl'], chapter['url'])
+                chapterUrlSet.add(chapter['url'])
             if not chapter.get('url'):
                 chapter['url'] = urlObj['rawUrl']
             if ruleToc.get('isPay', None):
@@ -61,6 +61,14 @@ def parseChapterList(bS, urlObj, content, evalJs: EvalJs):
             if chapter['name']:
                 chapterList.append(chapter)
 
+        if ruleToc.get('nextTocUrl', None):
+            nextTocUrls = getStrings(content, ruleToc['nextTocUrl'], evalJs)
+            if nextTocUrls:
+                nextTocUrls = [nextTocUrl for nextTocUrl in nextTocUrls if urljoin(
+                    urlObj['finalurl'], nextTocUrl) not in chapterUrlSet]
+        else:
+            nextTocUrls = None
+
         return nextTocUrls
 
     nextTocUrls = parseCL(content)
@@ -71,7 +79,7 @@ def parseChapterList(bS, urlObj, content, evalJs: EvalJs):
             allNextUrls = []
             while nextTocUrls and nextUrl not in allNextUrls:
                 allNextUrls.append(nextUrl)
-                urlObj = parseUrl(nextUrl, evalJs, urlObj['url'])
+                urlObj = parseUrl(nextUrl, evalJs, urlObj['finalurl'])
                 content, __ = getContent(urlObj)
                 nextTocUrls = parseCL(content)
                 if nextTocUrls:

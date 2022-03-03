@@ -76,7 +76,7 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
                 allNextUrls.append(nextChapterUrl)
             while nextContentUrls and nextUrl not in allNextUrls:
                 allNextUrls.append(nextUrl)
-                urlObj = parseUrl(nextUrl, evalJs)
+                urlObj = parseUrl(nextUrl, evalJs, urlObj['finalurl'])
                 content, __ = getContent(urlObj)
                 nextContentUrls = parseCt(content)
                 if nextContentUrls:
@@ -84,7 +84,7 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
                 else:
                     break
         else:
-            contents = fetchContents(nextContentUrls)
+            contents = fetchContents(nextContentUrls, urlObj)
             for content, __ in contents:
                 parseCt(content)
 
@@ -110,13 +110,13 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
     return chapterContent
 
 
-def fetchContents(urls):
+def fetchContents(urls, urlObject):
     evalJs = EvalJs({})
     executor = ThreadPoolExecutor(max_workers=8)
     tasks = []
     results = []
     for u in urls:
-        urlObj = parseUrl(u, evalJs)
+        urlObj = parseUrl(u, evalJs, urlObject['finalurl'])
         task = executor.submit(getContent, urlObj)
         tasks.append(task)
     for task in tasks:

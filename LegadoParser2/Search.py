@@ -42,6 +42,9 @@ def parseSearchUrl(bS, key, page, evalJs):
     # 还有一种是带js的
     searchUrl = bS['searchUrl']
     baseUrl = bS['bookSourceUrl']
+    # 删除链接中的fragment
+    baseUrl = baseUrl.split('#', 1)[0]
+
     if bS.get('header', None):
         headers = bS['header']
     else:
@@ -117,8 +120,11 @@ def getSearchResult(bS, urlObj, content, evalJs: EvalJs, **kwargs):
         #     ehtml = tostring(e, encoding='utf-8').decode()
         try:
             bookInfo['name'] = Fmt.bookName(getString(e, ruleSearch['name'], evalJs).strip())
-            bookInfo['bookUrl'] = urljoin(finalUrl, getStrings(
-                e, ruleSearch['bookUrl'], evalJs)[0].strip())
+            bookUrlList = getStrings(e, ruleSearch['bookUrl'], evalJs)
+            if bookUrlList:
+                bookInfo['bookUrl'] = urljoin(finalUrl, bookUrlList[0].strip())
+            else:
+                bookInfo['bookUrl'] = finalUrl
             if ruleSearch.get('author', None):
                 bookInfo['author'] = Fmt.author(getString(e, ruleSearch['author'], evalJs).strip())
             if ruleSearch.get('kind', None):
