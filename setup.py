@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
-from LegadoParser2 import __version__
-
 import sys
+
+__version__ = '1.0.0'
 
 install_requires = []
 
