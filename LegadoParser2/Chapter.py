@@ -37,8 +37,8 @@ def getChapterContent(compiledBookSource, url, variables, nextChapterUrl=''):
 def parseContent(bS, urlObj, content, evalJs, **kwargs):
     ruleContent = bS['ruleContent']
     nextChapterUrl = kwargs.get('nextChapterUrl')
-    if not ruleContent:
-        return {}
+    # if not ruleContent:
+    #     return {}
 
     _content = content
 

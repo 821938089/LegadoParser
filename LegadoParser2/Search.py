@@ -98,6 +98,7 @@ def parseSearchUrl(bS, key, page, evalJs):
 
 def getSearchResult(bS, urlObj, content, evalJs: EvalJs, **kwargs):
     ruleSearch = bS['ruleSearch']
+
     if not ruleSearch:
         return []
 
@@ -124,7 +125,7 @@ def getSearchResult(bS, urlObj, content, evalJs: EvalJs, **kwargs):
             if bookUrlList:
                 bookInfo['bookUrl'] = urljoin(finalUrl, bookUrlList[0].strip())
             else:
-                bookInfo['bookUrl'] = finalUrl
+                bookInfo['bookUrl'] = urlObj['rawUrl']
             if ruleSearch.get('author', None):
                 bookInfo['author'] = Fmt.author(getString(e, ruleSearch['author'], evalJs).strip())
             if ruleSearch.get('kind', None):

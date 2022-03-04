@@ -24,8 +24,8 @@ def getChapterList(compiledBookSource, url, variables):
 def parseChapterList(bS, urlObj, content, evalJs: EvalJs):
     ruleToc = bS['ruleToc']
 
-    if not ruleToc:
-        return []
+    # if not ruleToc:
+    #     return []
 
     chapterList = []
 
@@ -43,7 +43,11 @@ def parseChapterList(bS, urlObj, content, evalJs: EvalJs):
                 chapter['url'] = getString(e, ruleToc['chapterUrl'], evalJs)
                 if chapter['url']:
                     chapter['url'] = urljoin(urlObj['finalurl'], chapter['url'])
+                else:
+                    chapter['url'] = urlObj['rawUrl']
                 chapterUrlSet.add(chapter['url'])
+            else:
+                chapter['url'] = urlObj['rawUrl']
             if not chapter.get('url'):
                 chapter['url'] = urlObj['rawUrl']
             if ruleToc.get('isPay', None):

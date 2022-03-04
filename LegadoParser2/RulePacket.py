@@ -309,7 +309,8 @@ def compileBookSource(bookSource, specify=''):
     bookSource = deepcopy(bookSource)
     trimBookSource(bookSource)
     ruleGroupNames = ('ruleSearch', 'ruleBookInfo', 'ruleToc', 'ruleContent')
-    excludeRuleSet = {'webJs', 'imageStyle'}
+    excludeRuleSet = {'checkKeyWord', 'canReName',
+                      'webJs', 'imageStyle', 'sourceRegex', 'payAction'}
     if specify in bookSource:
         for key in bookSource[specify]:
             if key in excludeRuleSet:
