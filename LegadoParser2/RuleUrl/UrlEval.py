@@ -3,8 +3,10 @@ from LegadoParser2.RuleType import RuleType
 from copy import deepcopy
 from LegadoParser2.RulePacket import preProcessRule, packet
 from LegadoParser2.config import DEBUG_MODE
+from functools import lru_cache
 
 
+@lru_cache
 def getUrlRuleObj(rule):
     return preProcessRule(packet(tokenizerUrl(rule)))
 
