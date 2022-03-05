@@ -169,7 +169,7 @@ def fixPUAStr(text, allFontFaceUrl, PUAChars):
             return text
 
 
-# 该js函数使用selenium在浏览器中执行，获取到的数据会保存到webView.allFontFaceUrl -> urlObj['allFontFaceUrl']
+# 该js函数使用selenium在浏览器中执行，获取到的数据会保存到getResponseByUrl返回值中 -> urlObj['allFontFaceUrl']
 # 函数功能：获取同源css中的所有@font-face中的src
 # 注意只有同源的css能获取到字体文件地址，非同源（cdn）的css无法获取字体地址，会返回css的href，没写这里的处理代码
 # https://stackoverflow.com/questions/10248100/enumerate-font-face-urls-using-javascript-jquery
