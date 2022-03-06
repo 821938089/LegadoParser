@@ -34,7 +34,7 @@ jobs:
       run: |
           python usage.py
   
-  install-package-3_10:
+  install-package:
     strategy:
       fail-fast: false
       matrix:
