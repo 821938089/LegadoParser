@@ -6,6 +6,7 @@ import ast
 # 候选Json解析库
 # https://pypi.org/project/json5/
 
+
 class GSONParseError(Exception):
     '''GSON解析失败'''
 
@@ -28,7 +29,7 @@ def parse(text):
         try:
             result = ast.literal_eval(text)
             return result
-        except:
+        except Exception:
             pass
     else:
         return result
@@ -37,7 +38,7 @@ def parse(text):
         try:
             result = hjson.loads(text)
             return dict(result)
-        except:
+        except Exception:
             pass
     else:
         return result

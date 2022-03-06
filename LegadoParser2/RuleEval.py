@@ -38,7 +38,7 @@ def getElements(content, rulesObj, evalJs: 'EvalJs'):
                 content = regexProcessor(content, rule)
             elif rule['type'] == RuleType.Order:
                 reverse = rule['preProcess']['reverse']
-    except:
+    except Exception:
         if DEBUG_MODE:
             raise
         else:
@@ -74,7 +74,7 @@ def getStrings(content, rulesObj, evalJs, **kwargs):
                 content = formatProcrssor(content, rule, evalJs)
             elif rule['type'] == RuleType.Regex:
                 content = regexProcessor(content, rule, **kwargs)
-    except:
+    except Exception:
         if DEBUG_MODE:
             raise
         else:

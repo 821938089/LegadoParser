@@ -17,7 +17,7 @@ def getZipStringContent(url, path):
                 req(url, header=headers, file_obj=mem_zip_file)
             else:
                 mem_zip_file.write(bytes.fromhex(url))
-        except:
+        except Exception:
             if DEBUG_MODE:
                 print('getZipStringContent 文件下载失败')
             return ''

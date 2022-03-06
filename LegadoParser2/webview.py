@@ -11,7 +11,7 @@ from LegadoParser2.config import DEBUG_MODE, USER_AGENT
 from urllib.parse import parse_qs
 try:
     from LegadoParser2.fontutils import getAllFontFaceUrl
-except:
+except Exception:
     getAllFontFaceUrl = None
 
 # bot 检测
@@ -33,15 +33,6 @@ class WebView(object):
         # https://chromedevtools.github.io/devtools-protocol/tot/Network/#method-setUserAgentOverride
             self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {
                                         "userAgent": userAgent})
-            self.allFontFaceUrl = None
-
-            if DEBUG_MODE:
-                global _driver
-                try:
-                    _driver.quit()
-                except:
-                    pass
-                _driver = self.driver
 
     @property
     def currentUrl(self):
@@ -67,6 +58,7 @@ class WebView(object):
         self.driver.execute_script(
             "window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})")
         time.sleep(0.7)
+        allFontFaceUrl = None
         if javaScript:
             result = ''
             for _ in range(30):
@@ -77,11 +69,11 @@ class WebView(object):
             else:
                 if DEBUG_MODE:
                     print('WebView.getResponseByPost js 执行超时')
-            return result, self.allFontFaceUrl, self.currentUrl
+            return result, allFontFaceUrl, self.currentUrl
         else:
             if getAllFontFaceUrl:
-                self.allFontFaceUrl = self.driver.execute_script(getAllFontFaceUrl)
-            return self.driver.page_source, self.allFontFaceUrl, self.currentUrl
+                allFontFaceUrl = self.driver.execute_script(getAllFontFaceUrl)
+            return self.driver.page_source, allFontFaceUrl, self.currentUrl
 
     def getResponseByPost(self, url, formData, charset='utf-8', javaScript=''):
         # self.driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {

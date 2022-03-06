@@ -45,7 +45,7 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
     if content and content.startswith('<') and content.endswith('>'):
         try:
             content = parse(content, sanitize_names=False)
-        except:
+        except Exception:
             content = HTML(content)
     elif content and content.startswith('{') and content.endswith('}'):
         content = json.loads(content)
@@ -103,7 +103,7 @@ def parseContent(bS, urlObj, content, evalJs, **kwargs):
                 chapterContent['content'], urlObj['allFontFaceUrl'], PUAChars)
     except NameError:
         pass
-    except:
+    except Exception:
         if DEBUG_MODE:
             print('parseContent OCR修复出错，已取消进行')
 

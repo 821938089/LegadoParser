@@ -21,7 +21,7 @@ def getElementsByDefault(content, compileRule):
     if isinstance(content, str):
         try:
             content = parse(content, sanitize_names=False)
-        except:
+        except Exception:
             content = HTML(content)
     elif isinstance(content, list):
         _content = []
@@ -69,7 +69,7 @@ def getStringsByDefault(content, compileRule):
     if isinstance(content, str):
         try:
             content = parse(content, sanitize_names=False)
-        except:
+        except Exception:
             content = HTML(content)
     if not isinstance(content, list):
         content = [content]

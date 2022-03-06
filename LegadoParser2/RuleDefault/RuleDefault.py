@@ -11,7 +11,7 @@ def getElementsByDefault(content, compileRule):
     if isinstance(content, str):
         try:
             content = parse(content, treebuilder='soup')
-        except:
+        except Exception:
             content = BeautifulSoup(content, 'html5lib')
     elif isinstance(content, list):
         _content = []

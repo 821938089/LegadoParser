@@ -61,7 +61,7 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
         if headers:
             try:
                 urlObj['headers'].update(GSON.parse(headers))
-            except:
+            except Exception:
                 pass
 
         if isinstance(urlObj['body'], dict):
@@ -83,7 +83,7 @@ def parseUrl(ruleUrl, evalJs, baseUrl='', headers=''):
         if headers:
             try:
                 urlObj['headers'].update(GSON.parse(headers))
-            except:
+            except Exception:
                 pass
         url = urljoin(baseUrl, _url)
     urlObj['url'] = url

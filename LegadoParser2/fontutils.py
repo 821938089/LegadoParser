@@ -137,7 +137,7 @@ def fixPUAStr(text, allFontFaceUrl, PUAChars):
                 mem_font_file.write(base64.b64decode(fontbs64))
             else:
                 req(fontUrl, header=headers, file_obj=mem_font_file)
-        except:
+        except Exception:
             if DEBUG_MODE:
                 print('fixPUAStr 字体文件下载失败')
             return text

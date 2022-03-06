@@ -33,7 +33,7 @@ class Fmt():
                 result = f'{words/10000.0:.1f}万字'
             else:
                 result = f'{words}字'
-        except:
+        except Exception:
             result = text
 
         return result

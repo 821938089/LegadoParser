@@ -40,7 +40,7 @@ def parseBookInfo(bS, urlObj, content, evalJs):
         if content and content.startswith('<') and content.endswith('>'):
             try:
                 content = parse(content, sanitize_names=False)
-            except:
+            except Exception:
                 content = HTML(content)
         elif content and content.startswith('{') and content.endswith('}'):
             content = json.loads(content)

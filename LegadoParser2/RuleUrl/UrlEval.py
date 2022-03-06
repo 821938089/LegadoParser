@@ -23,7 +23,7 @@ def getStrings(content, rulesObj, evalJs):
 
         if isinstance(content, str):
             content = [content]
-    except:
+    except Exception:
         if DEBUG_MODE:
             raise
         else:

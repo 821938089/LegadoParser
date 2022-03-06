@@ -20,7 +20,7 @@ def getElementsByXpath(content, rule):
         # content = html5parser.fromstring(content, parser=HTMLParser(namespaceHTMLElements=False))
         try:
             content = parse(content, sanitize_names=False)
-        except:
+        except Exception:
             content = HTML(content)
 
     elif isinstance(content, list):

@@ -69,7 +69,7 @@ class EvalJs(object):
     def getVariable(self, key):
         try:
             return self.variables[key]
-        except:
+        except Exception:
             return ''
 
     def dumpVariables(self):
@@ -85,7 +85,7 @@ class EvalJs(object):
                 print(url)
             urlObj = parseUrl(url, self)
             content = getContent(urlObj)[0]
-        except:
+        except Exception:
             if DEBUG_MODE:
                 print('ajax出错了')
                 print(f'ajax url {url}')
