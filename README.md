@@ -29,13 +29,15 @@ sudo apt-get install libxml2 libxml2-dev
 pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser
 ```
 
-### OCR可选安装
+### OCR字体识别可选安装
 
 ```bash
 pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser[ocr]
 ```
 
-安装后使用webView获取章节内容会自动检测是否需要OCR
+安装后使用webView获取章节内容会自动检测是否需要OCR字体识别
+
+局限性较大，无必要不推荐安装
 
 ### 升级
 
