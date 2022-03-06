@@ -3,8 +3,10 @@ from LegadoParser2.BookInfo import getBookInfo
 from LegadoParser2.ChapterList import getChapterList
 from LegadoParser2.Chapter import getChapterContent
 from LegadoParser2.RulePacket import compileBookSource
-import json
 from pprint import pprint
+import json
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
 
 
 def main():
