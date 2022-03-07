@@ -28,7 +28,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools
         # python -m pip install flake8 pytest
-        python -m pip install -e .${{ matrix.extra }}
+        python -m pip install -e .${{ matrix.extra }} --no-use-pep517
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run usage.py
       run: |
@@ -52,7 +52,7 @@ jobs:
         python -m pip install --upgrade pip setuptools
         sudo apt-get install -y python3-setuptools
         # python -m pip install flake8 pytest
-        python -m pip install -e .
+        python -m pip install -e . --no-use-pep517
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run usage.py
       run: |
