@@ -28,11 +28,11 @@ class EvalJs(object):
         else:
             self.context.eval(_jsCache)
 
-        self.context.add_callable('pyPut', self.putVariable)
-        self.context.add_callable('pyGet', self.getVariable)
-        self.context.add_callable('pyAjax', self.ajax)
+        # self.context.add_callable('pyPut', self.putVariable)
+        # self.context.add_callable('pyGet', self.getVariable)
+        # self.context.add_callable('pyAjax', self.ajax)
         self.context.add_callable('pyGetZipStringContent', getZipStringContent)
-        self.context.add_callable('pyGetString', self.getString)
+        # self.context.add_callable('pyGetString', self.getString)
 
     def set(self, name, value):
         if isinstance(value, (list, dict)):
