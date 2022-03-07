@@ -26,7 +26,7 @@ pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser
 
 ```bash
 sudo apt-get install libxml2 libxml2-dev
-pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser
+pip install git+https://github.com/821938089/LegadoParser#egg=LegadoParser --no-use-pep517
 ```
 
 ### OCR字体识别可选安装
