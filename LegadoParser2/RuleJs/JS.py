@@ -1,13 +1,19 @@
 
-import quickjs
 import json
 # from LegadoParser2.HttpRequset2 import req
 # from httpx._exceptions import RequestError
 import traceback
 import json
-from quickjs import Object
 import os
 from LegadoParser2.config import DEBUG_MODE
+import sys
+if sys.platform == 'win32':
+    import LegadoParser2.quickjs as quickjs
+    from LegadoParser2.quickjs import Object
+else:
+    import quickjs
+    from quickjs import Object
+
 from LegadoParser2.RuleJs.jsExtension import getZipStringContent, getStringJs
 import re
 _jsCache = ''
@@ -28,11 +34,11 @@ class EvalJs(object):
         else:
             self.context.eval(_jsCache)
 
-        # self.context.add_callable('pyPut', self.putVariable)
-        # self.context.add_callable('pyGet', self.getVariable)
-        # self.context.add_callable('pyAjax', self.ajax)
+        self.context.add_callable('pyPut', self.putVariable)
+        self.context.add_callable('pyGet', self.getVariable)
+        self.context.add_callable('pyAjax', self.ajax)
         self.context.add_callable('pyGetZipStringContent', getZipStringContent)
-        # self.context.add_callable('pyGetString', self.getString)
+        self.context.add_callable('pyGetString', self.getString)
 
     def set(self, name, value):
         if isinstance(value, (list, dict)):
