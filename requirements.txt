@@ -4,7 +4,7 @@ html5-parser~=0.4.10;platform_system=="Linux"
 cssselect~=1.1.0
 hjson~=3.0.2
 jsonpath_ng~=1.5.3
-git+https://github.com/821938089/quickjs;platform_system=="Linux"
+git+https://github.com/821938089/quickjs@master#egg=quickjs;platform_system=="Linux"
 selenium~=4.1.0
 webdriver-manager~=3.5.2
 fs~=2.4.15
