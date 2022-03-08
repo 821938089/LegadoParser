@@ -1,5 +1,4 @@
 import json
-from operator import imod
 import re
 from jsonpath_ng import JSONPath
 from lxml.etree import XPath
