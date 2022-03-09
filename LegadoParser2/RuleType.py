@@ -19,11 +19,12 @@ class RuleType(Enum):
     Format = 13  # 格式化字符串/拼接规则 包含有 $1 @get:{ } {{ }} { } 等规则
     JsonInner = 14
     JoinSymbol = 15
+    Page = 16  # <,{{ }}>规则
 
 
 def getRuleType(rules, index, hasEndRule=False, contentIsJson=False):
     ruleSeperatorSet = {'@', '@@', '{{', '}}', '<js>', '</js>',
-                        '@js:', '@css:', '@xpath:', '@json:', '&&', '||', r'%%', '##', '###', '}', '@put:{', '@get:{', '+', '-', ':'}
+                        '@js:', '@css:', '@xpath:', '@json:', '&&', '||', r'%%', '##', '###', '}', '@put:{', '@get:{', '+', '-', ':', '<', '>'}
     # ruleEndSet = {'text', 'textNodes', 'ownText', 'html', 'all'}
     ruleJoinSet = {'&&', '||', '%%', '##'}  # ‘##’不是连接符号，不想把判断结束规则条件写的太复杂了，就放一起了
     if rules[index] in ruleSeperatorSet:
@@ -44,6 +45,8 @@ def getRuleType(rules, index, hasEndRule=False, contentIsJson=False):
         return RuleType.Inner
     elif index > 0 and rules[index - 1] == '{':
         return RuleType.JsonInner
+    elif index > 0 and rules[index - 1] == '<':
+        return RuleType.Page
     elif rules[index].startswith('/') and not ('{{' in rules or '@get:{' in rules):
         return RuleType.Xpath
     elif rules[index].startswith('$.') or rules[index].startswith('$['):
@@ -67,7 +70,8 @@ def getRuleType2(rules, index):
     ruleOrderSeperatorSet = {'+', '-'}
     ruleInnerSeperatorSet = {'{{', '}}'}
     ruleJsonInnerSeperatorSet = {'{'}  # 右花括号(})可能是put规则的，不能放这里比较
-    ruleFormatSeperatorSet = {'{{', '}}', '{', '}', '@get:{'}
+    ruleFormatSeperatorSet = {'{{', '}}', '{', '}', '@get:{', '<', '>'}
+    rulePageSeperatorSet = {'<', '>'}
     # ruleEndSet = {'text', 'textNodes', 'ownText', 'html', 'all'}
     ruleJoinSet = {'&&', '||', '%%'}
     length = len(rules)
@@ -85,6 +89,8 @@ def getRuleType2(rules, index):
     elif rules[index] in ruleInnerSeperatorSet:
         return RuleType.Format
     elif rules[index] in ruleJsonInnerSeperatorSet:
+        return RuleType.Format
+    elif rules[index] in rulePageSeperatorSet:
         return RuleType.Format
     elif rules[index] in ruleJoinSet:
         return RuleType.JoinSymbol

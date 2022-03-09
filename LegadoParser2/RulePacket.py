@@ -1,7 +1,7 @@
 # 将词法分析的规则进行分组
 
 from LegadoParser2.RuleType import RuleType, getRuleType2, getRuleType
-from LegadoParser2.Tokenize2 import tokenizer, tokenizerInner
+from LegadoParser2.Tokenize2 import tokenizer, tokenizerInner, splitPage
 from LegadoParser2.RuleDefault.RuleDefaultEfficient2 import parseIndex, getElementsXpath
 from LegadoParser2.RuleDefault.EndRule import EndRuleXpath
 from lxml.etree import _Element, tostring, XPath, XPathSyntaxError
@@ -69,14 +69,14 @@ def preProcessRule(packedRules):
         subRule = []
         for i in ruleObj['rules']:
             if i in {'&&', '||', '%%'}:
-                if ruleObj['joinSymbol'] == '':
+                if not ruleObj['joinSymbol']:
                     ruleObj['joinSymbol'] = i
                 subRules.append(subRule)
                 subRule = []
                 continue
             subRule.append(i)
         subRules.append(subRule)
-        if len(subRules[-1]) == 0:
+        if not subRules[-1]:
             del subRules[-1]
             ruleObj['crossJoin'] = True
         subRules = list(filter(None, subRules))
@@ -176,29 +176,43 @@ def preProcessRule(packedRules):
             rule['preProcess'] = {'subRules': []}
             for subRule in rule['subRules']:
                 formatObj = {
-                    'innerRules': [], 'getRules': [], 'regexRules': [], 'jsonRules': [], 'compiledInnerRules': [], 'compiledJsonRules': []}
+                    'innerRules': [], 'getRules': [], 'regexRules': [],
+                    'jsonRules': [], 'pageRules': [], 'compiledInnerRules': [],
+                    'compiledJsonRules': [], 'compiledPageRules': []
+                }
                 length = len(subRule)
                 cursor = 0
                 while cursor < length:
-                    ruleType = getRuleType(rule['subRules'][0], cursor)
+                    ruleType = getRuleType(subRule, cursor)
                     if ruleType == RuleType.Inner:
                         formatObj['innerRules'].append(
-                            (rule['subRules'][0][cursor], cursor))
+                            (subRule[cursor], cursor))
                     elif ruleType == RuleType.Get:
                         formatObj['getRules'].append(
-                            (rule['subRules'][0][cursor], cursor))
+                            (subRule[cursor], cursor))
                     elif ruleType == RuleType.Regex:
                         # allInOne 的 $1
                         formatObj['regexRules'].append(
-                            (rule['subRules'][0][cursor], cursor))
+                            (subRule[cursor], cursor))
                     elif ruleType == RuleType.JsonInner:
                         formatObj['jsonRules'].append(
-                            (rule['subRules'][0][cursor], cursor))
+                            (subRule[cursor], cursor))
+                    elif ruleType == RuleType.Page:
+                        formatObj['pageRules'].append(
+                            (subRule[cursor], cursor))
                     cursor += 1
                 for i in formatObj['innerRules']:
                     formatObj['compiledInnerRules'].append(getRuleObj(i[0]))
                 for i in formatObj['jsonRules']:
                     formatObj['compiledJsonRules'].append(getRuleObj(i[0]))
+                for i in formatObj['pageRules']:
+                    pageRuleList = splitPage(i[0])
+                    for page in pageRuleList:
+                        page = page.strip()
+                        if '{{' in page:
+                            formatObj['compiledPageRules'].append(getRuleObj(page))
+                        else:
+                            formatObj['compiledPageRules'].append(page)
                 rule['preProcess']['subRules'].append(formatObj)
         elif rule['type'] == RuleType.Put:
             rule['preProcess'] = {'putRules': {}, 'compiledPutRules': {}}

@@ -41,7 +41,6 @@ def tokenizer(text: str) -> list:
         '@', 'tag.p.-2', '@', 'text', '##', '最后更新.|..\\:.*']
 
 """
-    # exclude = {'{{', '}}', '{', '}', ',', '@get:{'}
 
     tokenList = []
     stack = []
@@ -63,7 +62,7 @@ def tokenizer(text: str) -> list:
                         stack.append('{')
                         cursor += 1
                     elif char == '}':
-                        if stack[-1] == '{':
+                        if stack and stack[-1] == '{':
                             stack.pop()
                             cursor += 1
                         elif stack[-1] == '@get:{':
@@ -84,7 +83,7 @@ def tokenizer(text: str) -> list:
                         stack.append('{')
                         cursor += 1
                     elif char == '}':
-                        if stack[-1] == '{':
+                        if stack and stack[-1] == '{':
                             stack.pop()
                             cursor += 1
                         elif stack[-1] == '@put:{':
@@ -138,7 +137,7 @@ def tokenizer(text: str) -> list:
                         stack.append('{')
                         cursor += 1
                     elif char == '}':
-                        if stack[-1] == '{':
+                        if stack and stack[-1] == '{':
                             stack.pop()
                             cursor += 1
                         elif (result := ck(cursor, tmpStr[:-1], '}}', '{{', -1, '{{'))[2]:
@@ -267,49 +266,10 @@ def tokenizer(text: str) -> list:
                 cursor += 1
         else:
             cursor += 1
-        # if len(tmpStr) >= 6 and tmpStr[-6:] == '@get:{':
-        #     stack.append('@get:{')
-        #     tokenList.append(tmpStr[:-6])
-        #     tokenList.append('@get:{')
-        #     tmpStr = ''
 
-        # elif len(tmpStr) >= 2 and tmpStr[-2:] == '{{':
-        #     stack.append('{{')
-        #     tokenList.append(tmpStr[:-2])
-        #     tokenList.append('{{')
-        #     tmpStr = ''
-
-        # elif len(tmpStr) >= 2 and tmpStr[-2:] == '}}':
-        #     if stack[-1] == '{{':
-        #         stack.pop()
-        #         tokenList.append(tmpStr[:-2])
-        #         tokenList.append('}}')
-        #         tmpStr = ''
-
-        # elif len(tmpStr) >= 1 and tmpStr[-1:] == '{':
-        #     stack.append('{')
-        #     tokenList.append(tmpStr[:-1])
-        #     tokenList.append('{')
-        #     tmpStr = ''
-
-        # elif len(tmpStr) >= 1 and tmpStr[-1:] == '}':
-        #     if stack[-1] == '{':
-        #         stack.pop()
-        #         tokenList.append(tmpStr[:-1])
-        #         tokenList.append('}')
-        #         tmpStr = ''
-
-            # tokenList.append(tmpStr)
-            # tmpStr = ''
-            # 切分 {{ }} @get:{ } @put:{ }
-            # tokenList = tokensSplit(tokenList, ['{{', '}}', '@get:{', '}', '@put:{'], exclude)
-
-            # 切分 <js></js> @js:
-
-            # 切分,
     tokenList.append(tmpStr)
 
-    # return list(filter(lambda x: x.strip(), tokenList))
+    # return list(filter(lambda x: x.strip(), tokenList)) # 不可以这样写
     return list(filter(None, tokenList))
 
 
@@ -342,7 +302,7 @@ def tokenizerUrl(text: str) -> list:
                         stack.append('{')
                         cursor += 1
                     elif char == '}':
-                        if stack[-1] == '{':
+                        if stack and stack[-1] == '{':
                             stack.pop()
                             cursor += 1
                         elif (result := ck(cursor, tmpStr[:-1], '}}', '{{', -1, '{{'))[2]:
@@ -370,8 +330,19 @@ def tokenizerUrl(text: str) -> list:
                             cursor += 1
                     else:
                         cursor += 1
-            # elif (result := ck(cursor, tmpStr[:-1], '</js>', stackIndex=-1, stackText='<js>'))[2]:
-            #     cursor, tmpStr, __ = result
+            elif (result := ck(cursor, tmpStr[:-1], '<', '<'))[2]:
+                cursor, tmpStr, __ = result
+                while cursor < length:
+                    char = text[cursor]
+                    tmpStr += char
+                    if char == '>':
+                        if (result := ck(cursor, tmpStr[:-1], '>', stackIndex=-1, stackText='<'))[2]:
+                            cursor, tmpStr, __ = result
+                            break
+                        else:
+                            cursor += 1
+                    else:
+                        cursor += 1
             else:
                 cursor += 1
         elif char == '\\':
@@ -386,8 +357,6 @@ def tokenizerUrl(text: str) -> list:
 
 
 def tokenizerInner(text: str) -> list:
-    # exclude = {'{{', '}}', '{', '}', ',', '@get:{'}
-
     tokenList = []
     stack = []
     cursor = 0
@@ -409,7 +378,7 @@ def tokenizerInner(text: str) -> list:
                         stack.append('{')
                         cursor += 1
                     elif char == '}':
-                        if stack[-1] == '{':
+                        if stack and stack[-1] == '{':
                             stack.pop()
                             cursor += 1
                         elif (result := ck(cursor, tmpStr[:-1], '}}', '{{', -1, '{{'))[2]:
@@ -428,6 +397,52 @@ def tokenizerInner(text: str) -> list:
 
     tokenList.append(tmpStr)
     return list(filter(None, tokenList))
+
+
+def splitPage(text):
+    tokenList = []
+    stack = []
+    cursor = 0
+    length = len(text)
+    tmpStr = ''
+    char = ''
+    ck = Check(text, stack, tokenList).ck
+    while cursor < length:
+        char = text[cursor]
+        tmpStr += char
+
+        if char == '{':
+            if len(text) - 1 < cursor + 1:
+                break
+            if text[cursor:cursor + 2] == '{{':
+                cursor += 1
+                while cursor < length:
+                    char = text[cursor]
+                    tmpStr += char
+                    if char == '{':
+                        stack.append('{')
+                        cursor += 1
+                    elif char == '}':
+                        if stack and stack[-1] == '{':
+                            stack.pop()
+                            cursor += 1
+                        elif (not len(text) - 1 < cursor + 1) and text[cursor:cursor + 2] == '}}':
+                            cursor += 1
+                            break
+                        else:
+                            cursor += 1
+                    else:
+                        cursor += 1
+            else:
+                cursor += 1
+        elif char == ',':
+            if (result := ck(cursor, tmpStr[:-1], ','))[2]:
+                cursor, tmpStr, __ = result
+        else:
+            cursor += 1
+
+    tokenList.append(tmpStr)
+    return list(filter(lambda x: x != ',', tokenList))
 
 
 class Check:
@@ -505,3 +520,6 @@ class Check:
 # print(tokenizer('####'))
 # print(tokenizer(
 #     'tag.a.0@href##.+\\D((\\d+)\\d{3})\\D##http://www.ujxs.com/files/article/image/$2/$1/$1s.jpg###'))
+# print(tokenizerUrl('/sort/xuanhuan/<,{{page}}.html>'))
+# print(splitPage('1,abc{{,{},}}}def'))
+# print(tokenizerUrl('/search/{{key}}<,/{{page}}.html>'))

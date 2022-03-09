@@ -159,8 +159,10 @@ def formatProcrssor(content, rule, evalJs: 'EvalJs'):
         getRules = formatObj['getRules']
         jsonRules = formatObj['jsonRules']
         regexRules = formatObj['regexRules']
+        pageRules = formatObj['pageRules']
         compiledInnerRules = formatObj['compiledInnerRules']
         compiledJsonRules = formatObj['compiledJsonRules']
+        compiledPageRules = formatObj['compiledPageRules']
         regexRules = formatObj['regexRules']
 
         for idx, rs in enumerate(compiledInnerRules):
@@ -179,6 +181,23 @@ def formatProcrssor(content, rule, evalJs: 'EvalJs'):
             rawRules[jsonRules[idx][1]] = getString(content, rs, evalJs)
             rawRules[jsonRules[idx][1] - 1] = ''
             rawRules[jsonRules[idx][1] + 1] = ''
+
+        if pageRules:  # 处理 <,{{page}}> 规则
+            page = evalJs.get('page')
+
+            if page > len(compiledPageRules):
+                page = len(compiledPageRules)
+
+            pageRule = compiledPageRules[page - 1]
+
+            for _, cursor in pageRules:
+                if isinstance(pageRule, str):
+                    rawRules[cursor] = pageRule
+                elif isinstance(pageRule, list):
+                    rawRules[cursor] = getString('', pageRule, evalJs)
+                rawRules[cursor - 1] = ''
+                rawRules[cursor + 1] = ''
+
         if isinstance(content, tuple):
             for idx, r in enumerate(regexRules):
                 rawRules[regexRules[idx][1]] = content[int(r[0][1]) - 1]
@@ -186,6 +205,7 @@ def formatProcrssor(content, rule, evalJs: 'EvalJs'):
             rawRules[getRules[idx][1]] = evalJs.getVariable(r[0])
             rawRules[getRules[idx][1] - 1] = ''
             rawRules[getRules[idx][1] + 1] = ''
+
         resultList.append(''.join(rawRules))
         if joinSymbol == '||':
             break
