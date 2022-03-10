@@ -5,7 +5,7 @@
 """
 from LegadoParser2.RuleJs.JS import EvalJs
 from LegadoParser2.RuleEval import getElements, getStrings, getString
-from LegadoParser2.RuleUrl.Url import parseUrl, getContent
+from LegadoParser2.RuleUrl.Url import parseUrl, getContent, urljoin
 from LegadoParser2.RuleUrl.BodyType import Body
 from LegadoParser2.FormatUtils import Fmt
 from LegadoParser2.BookInfo import parseBookInfo
@@ -57,43 +57,6 @@ def parseSearchUrl(bS, key, page, evalJs):
 
     evalJs.set('baseUrl', searchObj['rawUrl'])
     return searchObj
-
-
-# def getContent(searchObj):
-#     if searchObj['method'] == 'GET':
-#         method = 0
-#     elif searchObj['method'] == 'POST':
-#         method = 1
-#     redirected = False
-#     charset = searchObj['charset']
-#     bodyType = searchObj['bodytype']
-#     body = searchObj['body']
-#     url = urlparse(searchObj['url'])
-#     url = url._replace(query=urlencode(parse_qs(url.query), doseq=True, encoding=charset))
-#     url = urlunparse(url)
-#     if body and bodyType == Body.FORM:
-#         body = urlencode(parse_qs(body), doseq=True, encoding=charset)
-#     elif body:
-#         body = body.encode(charset)
-
-#     content, __, respone = req(url, header=searchObj['headers'],
-#                                method=method, post_data=body)
-#     searchObj['finalurl'] = str(respone.url)
-#     if respone.history:
-#         searchObj['redirected'] = True
-#     else:
-#         searchObj['redirected'] = False
-
-#     # print(respone.status_code)
-#     # print(searchObj)
-#     if respone.status_code != 200:
-#         raise RequestError('状态码非200')
-#     # 重定向到了详情页
-#     if respone.history:
-#         redirected = True
-#         return content, redirected
-#     else:
-#         return content, redirected
 
 
 def getSearchResult(bS, urlObj, content, evalJs: EvalJs, **kwargs):
@@ -151,30 +114,3 @@ def getSearchResult(bS, urlObj, content, evalJs: EvalJs, **kwargs):
             searchResult.append(bookInfo)
 
     return searchResult
-
-
-def setDefaultHeaders(headers, bodyType):
-    headerKeys = [k.lower() for k in headers.keys()]
-    if 'user-agent' not in headerKeys:
-        headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    if 'content-type' not in headerKeys:
-        if bodyType == Body.FORM:
-            headers['Content-Type'] = 'application/x-www-form-urlencoded'
-        elif bodyType == Body.JSON:
-            headers['Content-Type'] = 'application/json'
-
-
-def urljoin(base, url):
-    # HttpCon = getLeftStr(base, '://')
-    # AddRoot = getMiddleStr(base, '://', '/')
-    HttpCon, AddRoot = base.split('://')
-    AddRoot = AddRoot.split('/')[0]
-    if url[:4] == 'http':
-        return url
-    elif url[:2] == '//':
-        return HttpCon + url
-    elif url[:1] == '/':
-        return HttpCon + '://' + AddRoot + url
-    else:
-        pos = base.rfind('/')
-        return base[:pos] + url
