@@ -70,7 +70,7 @@ def req(url, cellphone_mode=False, cookies='', header={}, method=0, post_data_ty
         else:
             with requests.stream('GET', url, headers=tmp_header,
                                  timeout=timeout, follow_redirects=allow_redirects) as r:
-                r.raise_for_status()
+                # r.raise_for_status()
                 if not file_obj:
                     with open(file_name, "wb") as file:
                         for chunk in r.iter_bytes(chunk_size=1024):

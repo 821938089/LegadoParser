@@ -181,9 +181,11 @@ def getContent(urlObj):
 
     # print(respone.status_code)
     # print(searchObj)
-    if DEBUG_MODE:
-        if respone:
-            respone.raise_for_status()
+
+    # if DEBUG_MODE:
+    #     if respone:
+    #         respone.raise_for_status()
+
     # if respone.status_code != 200:
     #     raise RequestError('状态码非200')
     # 重定向到了详情页
