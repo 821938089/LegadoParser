@@ -3,17 +3,13 @@ import json
 import traceback
 import json
 import os
-from LegadoParser2.config import DEBUG_MODE
-import sys
-if sys.platform == 'win32':
-    import LegadoParser2.quickjs as quickjs
-    from LegadoParser2.quickjs import Object
-else:
-    import quickjs
-    from quickjs import Object
-
-from LegadoParser2.RuleJs.jsExtension import getZipStringContent, getStringJs
+import quickjs
 import re
+
+from LegadoParser2.config import DEBUG_MODE
+from quickjs import Object
+from LegadoParser2.RuleJs.jsExtension import getZipStringContent, getStringJs
+
 _jsCache = ''
 
 
