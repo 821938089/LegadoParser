@@ -129,7 +129,7 @@ variables - getBookInfo函数中返回的variables - dict
 ```
 
 ```python
-compileBookSourcefrom LegadoParser2.Chapter import getChapterContent
+from LegadoParser2.Chapter import getChapterContent
 
 def getChapterContent(compiledBookSource, url, variables, nextChapterUrl=''):
 """
@@ -139,8 +139,8 @@ def getChapterContent(compiledBookSource, url, variables, nextChapterUrl=''):
 
 compiledBookSource- 经过compileBookSource函数编译的书源规则 - dict
 url - getChapterList函数中返回的url - str
-nextChapterUrl - 下一章的url - str
 variables - getChapterList函数中返回的variables - dict
+nextChapterUrl - 下一章的url - str
 
 """
 ```
