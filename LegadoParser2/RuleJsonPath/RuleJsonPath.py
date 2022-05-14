@@ -1,11 +1,17 @@
-from jsonpath_ng import parse
 import json
+
+from typing import Union, List
+from jsonpath_ng import parse
+from json import JSONDecodeError
 from LegadoParser2.RuleType import RuleType
 
 
-def getElementsByJsonPath(content, rule):
+def getElementsByJsonPath(content, rule) -> List[Union[dict, str]]:
     if isinstance(content, str):
-        content = json.loads(content)
+        try:
+            content = json.loads(content)
+        except JSONDecodeError:
+            return [content]
     elif isinstance(content, list):
         _content = []
         for c in content:
@@ -38,7 +44,7 @@ def getElementsByJsonPath(content, rule):
     return result
 
 
-def getStringsByJsonPath(content, rule):
+def getStringsByJsonPath(content, rule) -> List[str]:
     # if isinstance(content, str):
     #     content = json.loads(content)
     jsonPath = rule['jsonPath']

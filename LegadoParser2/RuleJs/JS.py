@@ -34,6 +34,7 @@ class EvalJs(object):
         else:
             self.context.eval(_jsCache)
 
+        # 注册 java 函数到 Python 中
         self.context.add_callable('pyPut', self.putVariable)
         self.context.add_callable('pyGet', self.getVariable)
         self.context.add_callable('pyAjax', self.ajax)
@@ -42,7 +43,8 @@ class EvalJs(object):
 
     def set(self, name, value):
         if isinstance(value, (list, dict)):
-            obj = self.context.parse_json(json.dumps(value))
+            # obj = self.context.parse_json(json.dumps(value))
+            obj = json.dumps(value)
             self.context.set(name, obj)
         else:
             self.context.set(name, value)
@@ -57,10 +59,7 @@ class EvalJs(object):
 
     def eval(self, expression):
         # print(expression)
-        # 替换变量定义中的let和const关键字为var，防止报重复定义变量错误
-        varRegex = re.compile(r'(let|const)\s+([a-zA-z_$][\w$]*)(\s*[=;]{0,1})')
-        expression = varRegex.sub(r'var \2\3', expression)
-        result = self.context.eval(expression)
+        result = self.context.eval(f'{{{expression}}}')
         if isinstance(result, Object):
             return json.loads(result.json())
         # elif result is None:

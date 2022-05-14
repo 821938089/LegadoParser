@@ -101,7 +101,7 @@ def putProcessor(content, rule, evalJs: 'EvalJs'):
         evalJs.putVariable(key, getString(content, r, evalJs))
 
 
-def jsProcessor(content, evalJs, rule, **kwargs):
+def jsProcessor(content, evalJs: 'EvalJs', rule, **kwargs):
     # hasInnerRule = rule['preProcess']['hasInnerRule']
     js = deepcopy(rule['preProcess']['js'])
     innerRules = rule['preProcess']['innerRules']
