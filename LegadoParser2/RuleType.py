@@ -60,7 +60,7 @@ def getRuleType(rules, index, hasEndRule=False, contentIsJson=False):
 
 
 # 规则分组专用函数
-def getRuleType2(rules, index):
+def getRuleTypeForGroup(rulesTokens, index):
     ruleSeperatorSet = {'@', '{{', '}}', '<js>', '</js>',
                         '@js:', '@css:', '@xpath:', '@json:', '&&', '||', r'%%', '##', '###', '}', '@put:{', '@get:{', '+', '-', ':'}
     ruleDefaultSeperatorSet = {'@', '@css:', '@@'}
@@ -74,61 +74,61 @@ def getRuleType2(rules, index):
     rulePageSeperatorSet = {'<', '>'}
     # ruleEndSet = {'text', 'textNodes', 'ownText', 'html', 'all'}
     ruleJoinSet = {'&&', '||', '%%'}
-    length = len(rules)
+    length = len(rulesTokens)
     # ------------自身预测-------------
-    if rules[index] in ruleDefaultSeperatorSet:
+    if rulesTokens[index] in ruleDefaultSeperatorSet:
         return RuleType.DefaultOrEnd
-    elif rules[index] in ruleJsSeperatorSet:
+    elif rulesTokens[index] in ruleJsSeperatorSet:
         return RuleType.Js
-    elif rules[index] in ruleJsonSeperatorSet:
+    elif rulesTokens[index] in ruleJsonSeperatorSet:
         return RuleType.Json
-    elif rules[index] in ruleRegexSeperatorSet:
+    elif rulesTokens[index] in ruleRegexSeperatorSet:
         return RuleType.Regex
-    elif rules[index] in ruleOrderSeperatorSet and index == 0:
+    elif rulesTokens[index] in ruleOrderSeperatorSet and index == 0:
         return RuleType.Order
-    elif rules[index] in ruleInnerSeperatorSet:
+    elif rulesTokens[index] in ruleInnerSeperatorSet:
         return RuleType.Format
-    elif rules[index] in ruleJsonInnerSeperatorSet:
+    elif rulesTokens[index] in ruleJsonInnerSeperatorSet:
         return RuleType.Format
-    elif rules[index] in rulePageSeperatorSet:
+    elif rulesTokens[index] in rulePageSeperatorSet:
         return RuleType.Format
-    elif rules[index] in ruleJoinSet:
+    elif rulesTokens[index] in ruleJoinSet:
         return RuleType.JoinSymbol
-    elif rules[index] == '@get:{':
+    elif rulesTokens[index] == '@get:{':
         return RuleType.Format
-    elif rules[index] == '@put:{':
+    elif rulesTokens[index] == '@put:{':
         return RuleType.Put
     # ------------自身预测-------------
     # ------------前向预测-------------
-    elif index > 0 and rules[index - 1] in ruleDefaultSeperatorSet:
+    elif index > 0 and rulesTokens[index - 1] in ruleDefaultSeperatorSet:
         return RuleType.DefaultOrEnd
-    elif index > 0 and rules[index - 1] in {'##', '####', ':'}:
+    elif index > 0 and rulesTokens[index - 1] in {'##', '####', ':'}:
         return RuleType.Regex
-    elif index > 0 and rules[index - 1] in {'<js>', '@js:'}:
+    elif index > 0 and rulesTokens[index - 1] in {'<js>', '@js:'}:
         return RuleType.Js
-    elif index > 0 and rules[index - 1] == '@put:{':
+    elif index > 0 and rulesTokens[index - 1] == '@put:{':
         return RuleType.Put
-    elif index > 0 and rules[index - 1] in ruleFormatSeperatorSet:
+    elif index > 0 and rulesTokens[index - 1] in ruleFormatSeperatorSet:
         return RuleType.Format
-    elif index > 0 and len(rules[index - 1]) == 2 and rules[index - 1][0] == '$' and rules[index - 1][1].isnumeric():
+    elif index > 0 and len(rulesTokens[index - 1]) == 2 and rulesTokens[index - 1][0] == '$' and rulesTokens[index - 1][1].isnumeric():
         return RuleType.Format
-    elif rules[index] == '}' and rules[index - 2] in {'@get:{', '{'}:
+    elif rulesTokens[index] == '}' and rulesTokens[index - 2] in {'@get:{', '{'}:
         return RuleType.Format
-    elif rules[index] == '}' and rules[index - 2] == '@put:{':
+    elif rulesTokens[index] == '}' and rulesTokens[index - 2] == '@put:{':
         return RuleType.Put
     # ------------前向预测-------------
     # $1规则可能是Regex和Format，需要优先判断是否是Regex，故需要先前向预测再自身预测
-    elif len(rules[index]) == 2 and rules[index][0] == '$' and rules[index][1].isnumeric():
+    elif len(rulesTokens[index]) == 2 and rulesTokens[index][0] == '$' and rulesTokens[index][1].isnumeric():
         return RuleType.Format
     # ------------后向预测-------------
-    elif index + 1 < length and rules[index + 1] in {'{{', '{', '@get:{'}:
+    elif index + 1 < length and rulesTokens[index + 1] in {'{{', '{', '@get:{'}:
         return RuleType.Format
-    elif index + 1 < length and len(rules[index + 1]) == 2 and rules[index + 1][0] == '$' and rules[index + 1][1].isnumeric():
+    elif index + 1 < length and len(rulesTokens[index + 1]) == 2 and rulesTokens[index + 1][0] == '$' and rulesTokens[index + 1][1].isnumeric():
         return RuleType.Format
     # ------------后向预测-------------
-    elif rules[index].startswith('$.') or rules[index].startswith('$['):
+    elif rulesTokens[index].startswith('$.') or rulesTokens[index].startswith('$['):
         return RuleType.Json
-    elif rules[index].startswith('/'):
+    elif rulesTokens[index].startswith('/'):
         return RuleType.Xpath
     elif index == 0 and length == 1:
         return RuleType.DefaultOrEnd

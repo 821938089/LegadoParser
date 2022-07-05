@@ -43,14 +43,17 @@ def parse(text):
     else:
         return result
 
-    js = {}
-    text = text[1:-1]
-    # key-value list
-    kvs = text.split(',')
-    kvs = [i.strip() for i in kvs]
-    for kv in kvs:
-        key, value = kv.split(':')
-        js[key.strip()] = value.strip()
+    try:
+        js = {}
+        text = text[1:-1]
+        # key-value list
+        kvs = text.split(',')
+        kvs = [i.strip() for i in kvs]
+        for kv in kvs:
+            key, value = kv.split(':')
+            js[key.strip()] = value.strip()
+    except Exception:
+        raise GSONParseError('GSON解析失败')
 
     if js:
         return js

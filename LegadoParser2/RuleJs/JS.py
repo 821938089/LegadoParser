@@ -4,6 +4,7 @@ import traceback
 import json
 import os
 import re
+from typing import Dict
 
 from LegadoParser2.config import DEBUG_MODE
 from LegadoParser2.RuleJs.jsExtension import getZipStringContent, getStringJs
@@ -25,7 +26,7 @@ class EvalJs(object):
 
         self.bS = bS
         self.context = quickjs.Context()
-        self.variables = {}  # 存放put get方法的内容
+        self.variables: Dict[str, str] = {}  # 存放put get方法的内容
         if not _jsCache:
             filePath = os.path.dirname(os.path.abspath(__file__))
             with open(os.path.join(filePath, 'jsExtension.js'), 'r') as f:
@@ -72,10 +73,7 @@ class EvalJs(object):
         return value
 
     def getVariable(self, key):
-        try:
-            return self.variables[key]
-        except Exception:
-            return ''
+        return self.variables.get(key, '')
 
     def dumpVariables(self):
         return self.variables.copy()

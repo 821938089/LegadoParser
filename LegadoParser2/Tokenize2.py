@@ -27,90 +27,98 @@ Legado 书源解析 词法分析 Lexical analyzer
 # https://github.com/PetterS/quickjs
 
 
-def tokenizer(text: str) -> list:
+from typing import List
+
+
+def tokenizer(text: str) -> List[str]:
     """
-阅读3.0规则分词器
+    阅读3.0规则分词器
 
-参数:
-    text: 进行分词的规则
+    参数:
+        text: 进行分词的规则
 
-返回值:
-    一个list里面按分词顺序存语法单元
+    返回值:
+        一个list里面按分词顺序存语法单元
 
-    例如:['id.info', '@', 'tag.a.-1', '@', 'text', '&&', 'id.info',
-        '@', 'tag.p.-2', '@', 'text', '##', '最后更新.|..\\:.*']
+        例如:['id.info', '@', 'tag.a.-1', '@', 'text', '&&', 'id.info',
+            '@', 'tag.p.-2', '@', 'text', '##', '最后更新.|..\\:.*']
+    """
 
-"""
-
-    tokenList = []
-    stack = []
+    tokenList: List[str] = []
+    stack: List[str] = []
     cursor = 0
     length = len(text)
-    tmpStr = ''
-    char = ''
+    tmpStr = ""
+    char = ""
     ck = Check(text, stack, tokenList).ck
     while cursor < length:
         char = text[cursor]
         tmpStr += char
-        if char == '@':
-            if (result := ck(cursor, tmpStr[:-1], '@get:{', '@get:{'))[2]:
+        if char == "@":
+            if (result := ck(cursor, tmpStr[:-1], "@get:{", "@get:{"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '{':
-                        stack.append('{')
+                    if char == "{":
+                        stack.append("{")
                         cursor += 1
-                    elif char == '}':
-                        if stack and stack[-1] == '{':
+                    elif char == "}":
+                        if stack and stack[-1] == "{":
                             stack.pop()
                             cursor += 1
-                        elif stack[-1] == '@get:{':
+                        elif stack[-1] == "@get:{":
                             stack.pop()
                             tokenList.append(tmpStr[:-1])
-                            tokenList.append('}')
+                            tokenList.append("}")
                             cursor += 1
-                            tmpStr = ''
+                            tmpStr = ""
                             break
                     else:
                         cursor += 1
-            elif (result := ck(cursor, tmpStr[:-1], '@put:{', '@put:{'))[2]:
+            elif (result := ck(cursor, tmpStr[:-1], "@put:{", "@put:{"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '{':
-                        stack.append('{')
+                    if char == "{":
+                        stack.append("{")
                         cursor += 1
-                    elif char == '}':
-                        if stack and stack[-1] == '{':
+                    elif char == "}":
+                        if stack and stack[-1] == "{":
                             stack.pop()
                             cursor += 1
-                        elif stack[-1] == '@put:{':
+                        elif stack[-1] == "@put:{":
                             stack.pop()
                             tokenList.append(tmpStr[:-1])
-                            tokenList.append('}')
+                            tokenList.append("}")
                             cursor += 1
-                            tmpStr = ''
+                            tmpStr = ""
                             break
                     else:
                         cursor += 1
-            elif (result := ck(cursor, tmpStr[:-1], '@css:'))[2]:
+            elif (result := ck(cursor, tmpStr[:-1], "@css:"))[2]:
                 cursor, tmpStr, __ = result
-            elif (result := ck(cursor, tmpStr[:-1], '@json:', '@json:'))[2]:
+            elif (result := ck(cursor, tmpStr[:-1], "@json:", "@json:"))[2]:
                 cursor, tmpStr, __ = result
-            elif (result := ck(cursor, tmpStr[:-1], '@@', ))[2]:
+            elif (
+                result := ck(
+                    cursor,
+                    tmpStr[:-1],
+                    "@@",
+                )
+            )[2]:
                 cursor, tmpStr, __ = result
-            elif (result := ck(cursor, tmpStr[:-1], '@js:'))[2]:
+            elif (result := ck(cursor, tmpStr[:-1], "@js:"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '#':
-                        if (result := ck(cursor, tmpStr[:-1], '###'))[2]:
+                    if char == "#":
+                        if (result := ck(cursor, tmpStr[:-1], "###"))[2]:
                             cursor, tmpStr, __ = result
                             break
-                        elif (result := ck(cursor, tmpStr[:-1], '##'))[2]:
+                        elif (result := ck(cursor, tmpStr[:-1], "##"))[2]:
                             cursor, tmpStr, __ = result
                         else:
                             cursor += 1
@@ -118,29 +126,31 @@ def tokenizer(text: str) -> list:
                         cursor += 1
                 # tmpStr = text[cursor:]
                 # break
-            elif text[cursor - 1] == '[':
+            elif text[cursor - 1] == "[":
                 cursor += 1
-            elif stack and stack[-1].lower() == '@json:':
+            elif stack and stack[-1].lower() == "@json:":
                 cursor += 1
             else:
                 tokenList.append(tmpStr[:-1])
-                tokenList.append('@')
+                tokenList.append("@")
                 cursor += 1
-                tmpStr = ''
-        elif char == '{':
-            if (result := ck(cursor, tmpStr[:-1], '{{', '{{'))[2]:
+                tmpStr = ""
+        elif char == "{":
+            if (result := ck(cursor, tmpStr[:-1], "{{", "{{"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '{':
-                        stack.append('{')
+                    if char == "{":
+                        stack.append("{")
                         cursor += 1
-                    elif char == '}':
-                        if stack and stack[-1] == '{':
+                    elif char == "}":
+                        if stack and stack[-1] == "{":
                             stack.pop()
                             cursor += 1
-                        elif (result := ck(cursor, tmpStr[:-1], '}}', '{{', -1, '{{'))[2]:
+                        elif (result := ck(cursor, tmpStr[:-1], "}}", "{{", -1, "{{"))[
+                            2
+                        ]:
                             cursor, tmpStr, __ = result
                             break
                         else:
@@ -149,59 +159,67 @@ def tokenizer(text: str) -> list:
                         cursor += 1
             # elif (result := ck(cursor, tmpStr[:-1], '{', '{'))[2]:
             #     cursor, tmpStr, __ = result
-            elif len(text) - 1 > cursor + 3 and text[cursor:cursor + 3] == '{$.':
-                stack.append('{')
+            elif len(text) - 1 > cursor + 3 and text[cursor : cursor + 3] == "{$.":
+                stack.append("{")
                 tokenList.append(tmpStr[:-1])
-                tokenList.append('{')
+                tokenList.append("{")
                 cursor += 1
-                tmpStr = ''
+                tmpStr = ""
 
             else:
                 # stack.append('{')
                 cursor += 1
-        elif char == '}':
-            if (result := ck(cursor, tmpStr[:-1], '}', '', -1, '{'))[2]:
+        elif char == "}":
+            if (result := ck(cursor, tmpStr[:-1], "}", "", -1, "{"))[2]:
                 cursor, tmpStr, __ = result
             # if stack and stack[-1] == '{':
             #     stack.pop()
             #     cursor += 1
             else:
                 cursor += 1
-        elif char == '|':
-            if stack and stack[-1] == '{{':
+        elif char == "|":
+            if stack and stack[-1] == "{{":
                 cursor += 1
-            if (result := ck(cursor, tmpStr[:-1], '||'))[2]:
+            if (result := ck(cursor, tmpStr[:-1], "||"))[2]:
                 cursor, tmpStr, __ = result
             else:
                 cursor += 1
-        elif char == '&':
+        elif char == "&":
             if len(text) - 1 < cursor + 1:
                 break
-            elif text[cursor + 1] == '&' and not (stack and stack[0] != '@json:'):
+            elif text[cursor + 1] == "&" and not (stack and stack[0] != "@json:"):
                 tokenList.append(tmpStr[:-1])
-                tokenList.append('&&')
+                tokenList.append("&&")
                 cursor += 2
-                tmpStr = ''
+                tmpStr = ""
             else:
                 cursor += 1
-        elif char == '%':
+        elif char == "%":
             if len(text) - 1 < cursor + 1:
                 break
-            elif text[cursor + 1] == '%' and not (stack and stack[0] != '@json:'):
+            elif text[cursor + 1] == "%" and not (stack and stack[0] != "@json:"):
                 tokenList.append(tmpStr[:-1])
-                tokenList.append(r'%%')
+                tokenList.append(r"%%")
                 cursor += 2
-                tmpStr = ''
+                tmpStr = ""
             else:
                 cursor += 1
-        elif char == '<':
-            if (result := ck(cursor, tmpStr[:-1], '<js>', '<js>'))[2]:
+        elif char == "<":
+            if (result := ck(cursor, tmpStr[:-1], "<js>", "<js>"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '<':
-                        if (result := ck(cursor, tmpStr[:-1], '</js>', stackIndex=-1, stackText='<js>'))[2]:
+                    if char == "<":
+                        if (
+                            result := ck(
+                                cursor,
+                                tmpStr[:-1],
+                                "</js>",
+                                stackIndex=-1,
+                                stackText="<js>",
+                            )
+                        )[2]:
                             cursor, tmpStr, __ = result
                             break
                         else:
@@ -212,38 +230,38 @@ def tokenizer(text: str) -> list:
             #     cursor, tmpStr, __ = result
             else:
                 cursor += 1
-        elif char == '\\':
+        elif char == "\\":
             tmpStr += text[cursor + 1]
             cursor += 2
-        elif (char in {'+', '-', ':'}) and cursor == 0:
+        elif (char in {"+", "-", ":"}) and cursor == 0:
             tokenList.append(char)
             cursor += 1
-            tmpStr = ''
-        elif char == ':' and cursor == 1:
+            tmpStr = ""
+        elif char == ":" and cursor == 1:
             tokenList.append(char)
             cursor += 1
-            tmpStr = ''
-        elif char == '#':
-            if (result := ck(cursor, tmpStr[:-1], '####'))[2]:
+            tmpStr = ""
+        elif char == "#":
+            if (result := ck(cursor, tmpStr[:-1], "####"))[2]:
                 cursor, tmpStr, __ = result
             # elif (result := ck(cursor, tmpStr[:-1], '###'))[2]:
             #     cursor, tmpStr, __ = result
-            elif (result := ck(cursor, tmpStr[:-1], '##'))[2]:
+            elif (result := ck(cursor, tmpStr[:-1], "##"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '#':
-                        if (result := ck(cursor, tmpStr[:-1], '###'))[2]:
+                    if char == "#":
+                        if (result := ck(cursor, tmpStr[:-1], "###"))[2]:
                             cursor, tmpStr, __ = result
                             break
-                        elif (result := ck(cursor, tmpStr[:-1], '##'))[2]:
+                        elif (result := ck(cursor, tmpStr[:-1], "##"))[2]:
                             cursor, tmpStr, __ = result
 
                         else:
                             cursor += 1
-                    elif char == '@':
-                        if (result := ck(cursor, tmpStr[:-1], '@js:'))[2]:
+                    elif char == "@":
+                        if (result := ck(cursor, tmpStr[:-1], "@js:"))[2]:
                             cursor, tmpStr, __ = result
                             tmpStr = text[cursor:]
                             cursor = len(text)
@@ -254,14 +272,14 @@ def tokenizer(text: str) -> list:
                         cursor += 1
             else:
                 cursor += 1
-        elif char == '$':
+        elif char == "$":
             if len(text) - 1 < cursor + 1:
                 break
             if text[cursor + 1].isnumeric():
                 tokenList.append(tmpStr[:-1])
-                tokenList.append('$' + text[cursor + 1])
+                tokenList.append("$" + text[cursor + 1])
                 cursor += 2
-                tmpStr = ''
+                tmpStr = ""
             else:
                 cursor += 1
         else:
@@ -273,39 +291,41 @@ def tokenizer(text: str) -> list:
     return list(filter(None, tokenList))
 
 
-def tokenizerUrl(text: str) -> list:
+def tokenizerUrl(text: str) -> List[str]:
 
-    tokenList = []
-    stack = []
+    tokenList:List[str] = []
+    stack:List[str] = []
     cursor = 0
     length = len(text)
-    tmpStr = ''
-    char = ''
+    tmpStr = ""
+    char = ""
     ck = Check(text, stack, tokenList).ck
     while cursor < length:
         char = text[cursor]
         tmpStr += char
-        if char == '@':
-            if (result := ck(cursor, tmpStr[:-1], '@js:'))[2]:
+        if char == "@":
+            if (result := ck(cursor, tmpStr[:-1], "@js:"))[2]:
                 cursor, tmpStr, __ = result
                 tmpStr = text[cursor:]
                 break
             else:
                 cursor += 1
-        elif char == '{':
-            if (result := ck(cursor, tmpStr[:-1], '{{', '{{'))[2]:
+        elif char == "{":
+            if (result := ck(cursor, tmpStr[:-1], "{{", "{{"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '{':
-                        stack.append('{')
+                    if char == "{":
+                        stack.append("{")
                         cursor += 1
-                    elif char == '}':
-                        if stack and stack[-1] == '{':
+                    elif char == "}":
+                        if stack and stack[-1] == "{":
                             stack.pop()
                             cursor += 1
-                        elif (result := ck(cursor, tmpStr[:-1], '}}', '{{', -1, '{{'))[2]:
+                        elif (result := ck(cursor, tmpStr[:-1], "}}", "{{", -1, "{{"))[
+                            2
+                        ]:
                             cursor, tmpStr, __ = result
                             break
                         else:
@@ -316,27 +336,39 @@ def tokenizerUrl(text: str) -> list:
             else:
                 cursor += 1
 
-        elif char == '<':
-            if (result := ck(cursor, tmpStr[:-1], '<js>', '<js>'))[2]:
+        elif char == "<":
+            if (result := ck(cursor, tmpStr[:-1], "<js>", "<js>"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '<':
-                        if (result := ck(cursor, tmpStr[:-1], '</js>', stackIndex=-1, stackText='<js>'))[2]:
+                    if char == "<":
+                        if (
+                            result := ck(
+                                cursor,
+                                tmpStr[:-1],
+                                "</js>",
+                                stackIndex=-1,
+                                stackText="<js>",
+                            )
+                        )[2]:
                             cursor, tmpStr, __ = result
                             break
                         else:
                             cursor += 1
                     else:
                         cursor += 1
-            elif (result := ck(cursor, tmpStr[:-1], '<', '<'))[2]:
+            elif (result := ck(cursor, tmpStr[:-1], "<", "<"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '>':
-                        if (result := ck(cursor, tmpStr[:-1], '>', stackIndex=-1, stackText='<'))[2]:
+                    if char == ">":
+                        if (
+                            result := ck(
+                                cursor, tmpStr[:-1], ">", stackIndex=-1, stackText="<"
+                            )
+                        )[2]:
                             cursor, tmpStr, __ = result
                             break
                         else:
@@ -345,7 +377,7 @@ def tokenizerUrl(text: str) -> list:
                         cursor += 1
             else:
                 cursor += 1
-        elif char == '\\':
+        elif char == "\\":
             tmpStr += text[cursor + 1]
             cursor += 2
 
@@ -356,32 +388,34 @@ def tokenizerUrl(text: str) -> list:
     return list(filter(None, tokenList))
 
 
-def tokenizerInner(text: str) -> list:
-    tokenList = []
-    stack = []
+def tokenizerInner(text: str) -> List[str]:
+    tokenList:List[str] = []
+    stack:List[str] = []
     cursor = 0
     length = len(text)
-    tmpStr = ''
-    char = ''
+    tmpStr = ""
+    char = ""
     ck = Check(text, stack, tokenList).ck
     while cursor < length:
         char = text[cursor]
         tmpStr += char
 
-        if char == '{':
-            if (result := ck(cursor, tmpStr[:-1], '{{', '{{'))[2]:
+        if char == "{":
+            if (result := ck(cursor, tmpStr[:-1], "{{", "{{"))[2]:
                 cursor, tmpStr, __ = result
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '{':
-                        stack.append('{')
+                    if char == "{":
+                        stack.append("{")
                         cursor += 1
-                    elif char == '}':
-                        if stack and stack[-1] == '{':
+                    elif char == "}":
+                        if stack and stack[-1] == "{":
                             stack.pop()
                             cursor += 1
-                        elif (result := ck(cursor, tmpStr[:-1], '}}', '{{', -1, '{{'))[2]:
+                        elif (result := ck(cursor, tmpStr[:-1], "}}", "{{", -1, "{{"))[
+                            2
+                        ]:
                             cursor, tmpStr, __ = result
                             break
                         else:
@@ -389,7 +423,7 @@ def tokenizerInner(text: str) -> list:
                     else:
                         cursor += 1
             else:
-                stack.append('{')
+                stack.append("{")
                 cursor += 1
 
         else:
@@ -404,29 +438,31 @@ def splitPage(text):
     stack = []
     cursor = 0
     length = len(text)
-    tmpStr = ''
-    char = ''
+    tmpStr = ""
+    char = ""
     ck = Check(text, stack, tokenList).ck
     while cursor < length:
         char = text[cursor]
         tmpStr += char
 
-        if char == '{':
+        if char == "{":
             if len(text) - 1 < cursor + 1:
                 break
-            if text[cursor:cursor + 2] == '{{':
+            if text[cursor : cursor + 2] == "{{":
                 cursor += 1
                 while cursor < length:
                     char = text[cursor]
                     tmpStr += char
-                    if char == '{':
-                        stack.append('{')
+                    if char == "{":
+                        stack.append("{")
                         cursor += 1
-                    elif char == '}':
-                        if stack and stack[-1] == '{':
+                    elif char == "}":
+                        if stack and stack[-1] == "{":
                             stack.pop()
                             cursor += 1
-                        elif (not len(text) - 1 < cursor + 1) and text[cursor:cursor + 2] == '}}':
+                        elif (not len(text) - 1 < cursor + 1) and text[
+                            cursor : cursor + 2
+                        ] == "}}":
                             cursor += 1
                             break
                         else:
@@ -435,14 +471,14 @@ def splitPage(text):
                         cursor += 1
             else:
                 cursor += 1
-        elif char == ',':
-            if (result := ck(cursor, tmpStr[:-1], ','))[2]:
+        elif char == ",":
+            if (result := ck(cursor, tmpStr[:-1], ","))[2]:
                 cursor, tmpStr, __ = result
         else:
             cursor += 1
 
     tokenList.append(tmpStr)
-    return list(filter(lambda x: x != ',', tokenList))
+    return list(filter(lambda x: x != ",", tokenList))
 
 
 class Check:
@@ -452,11 +488,16 @@ class Check:
         self.tokenList = tokenList
         self.length = len(self.text)
 
-    def ck(self, cursor, tmpStr, tokenText='', pushStack='', stackIndex=None, stackText=''):
+    def ck(
+        self, cursor, tmpStr, tokenText="", pushStack="", stackIndex=None, stackText=""
+    ):
         if self.length < cursor + len(tokenText):
             return cursor, tmpStr, False
 
-        if tokenText and self.text[cursor:cursor + len(tokenText)].lower() == tokenText:
+        if (
+            tokenText
+            and self.text[cursor : cursor + len(tokenText)].lower() == tokenText
+        ):
             if stackIndex:
                 if self.stack and self.stack[stackIndex] == stackText:
                     self.stack.pop()
@@ -469,7 +510,7 @@ class Check:
             self.tokenList.append(tmpStr)
             self.tokenList.append(tokenText)
             cursor += len(tokenText)
-            tmpStr = ''
+            tmpStr = ""
             return cursor, tmpStr, True
         elif not tokenText:
             if self.stack and self.stack[stackIndex] == stackText:

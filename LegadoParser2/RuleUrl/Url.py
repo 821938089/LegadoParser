@@ -113,7 +113,7 @@ def urljoin(baseUrl, relativeUrl):
         return baseUrl
     if relativeUrl.startswith('http'):
         return relativeUrl
-    scheme, address = baseUrl.split('://')
+    scheme, address = baseUrl.split('://', 1)
     address = address.split('/')[0]
     if relativeUrl[:2] == '//':
         return scheme + ':' + relativeUrl

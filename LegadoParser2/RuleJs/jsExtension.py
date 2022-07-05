@@ -1,6 +1,6 @@
 from LegadoParser2.HttpRequset2 import req
 from LegadoParser2.config import USER_AGENT, DEBUG_MODE
-from LegadoParser2.RulePacket import getRuleObj
+from LegadoParser2.RuleCompile import getRuleObj
 from fs.memoryfs import MemoryFS
 from fs.zipfs import ZipFS
 from charset_normalizer import from_bytes

@@ -147,7 +147,7 @@ nextChapterUrl - 下一章的url - str
 
 ```python
 from LegadoParser2.RuleEval import getElements, getString, getStrings
-from LegadoParser2.RulePacket import getRuleObj
+from LegadoParser2.RuleCompile import getRuleObj
 
 # 基础API，根据规则提取数据
 # 详细参数见源码

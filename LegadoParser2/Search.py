@@ -3,6 +3,7 @@
 
 
 """
+from typing import List
 from LegadoParser2.RuleJs.JS import EvalJs
 from LegadoParser2.RuleEval import getElements, getStrings, getString
 from LegadoParser2.RuleUrl.Url import parseUrl, getContent, urljoin
@@ -73,7 +74,7 @@ def getSearchResult(bS, urlObj, content, evalJs: EvalJs, **kwargs):
     if not elements and (redirected or useWebView):
         return [parseBookInfo(bS, urlObj, content, evalJs)]
 
-    searchResult = []
+    searchResult: List[dict] = []
     finalUrl = urlObj['finalurl']  # 最终访问的url，可能是跳转后的Url
     # finalUrl = urlparse(finalUrl)._replace(query='').geturl()  # 去除query
 
