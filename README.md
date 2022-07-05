@@ -60,7 +60,7 @@ pip uninstall LegadoParser -y
 ## 高级API
 
 ```python
-from LegadoParser2.RulePacket import compileBookSource
+from LegadoParser2.RuleCompile import compileBookSource
 
 def compileBookSource(bookSource, specify=''):
 """
